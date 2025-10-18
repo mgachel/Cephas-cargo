@@ -233,7 +233,7 @@ class ApiClient {
 
     try {
       const host = typeof window !== 'undefined' ? window.location.hostname : '';
-      if (host === 'admin.primemade.org' || host.endsWith('.admin.primemade.org')) {
+        if (host === 'admin.cephascargo.com' || host.endsWith('.admin.cephascargo.com')) {
         redirectTo = '/admin/login';
       }
     } catch (e) {
@@ -354,8 +354,8 @@ class AuthApiService {
     let loginEndpoint = '/api/auth/login/';
     try {
       if (typeof window !== 'undefined') {
-        const host = window.location.hostname || '';
-        const isAdminHost = host === 'admin.primemade.org' || host.endsWith('.admin.primemade.org');
+  const host = window.location.hostname || '';
+  const isAdminHost = host === 'admin.cephascargo.com' || host.endsWith('.admin.cephascargo.com');
         if (isAdminHost) loginEndpoint = '/api/auth/admin-login/';
       }
     } catch (e) {

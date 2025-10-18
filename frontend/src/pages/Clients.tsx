@@ -635,19 +635,19 @@ export default function Clients() {
                   
                   if (
                     !confirm(
-                      `Reset password for ${clientName}?\n\nThe password will be reset to: PrimeMade`
+                      `Reset password for ${clientName}?\n\nThe password will be reset to: CephasCargo`
                     )
                   )
                     return;
 
                   try {
                     await adminService.resetUserPassword(row._raw.id, {
-                      new_password: "PrimeMade",
+                      new_password: "CephasCargo",
                     });
                     
                     toast({
                       title: "Password Reset",
-                      description: `Password for ${clientName} has been reset to "PrimeMade"`,
+                      description: `Password for ${clientName} has been reset to "CephasCargo"`,
                     });
                   } catch (e: unknown) {
                     toast({

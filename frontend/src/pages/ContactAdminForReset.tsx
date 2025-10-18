@@ -57,11 +57,11 @@ export default function ContactAdminForReset() {
               </li>
               <li className="flex gap-2">
                 <span className="font-semibold">3.</span>
-                <span>Admin will reset your password to <strong>"PrimeMade"</strong></span>
+                <span>Admin will reset your password to the corporate default password</span>
               </li>
               <li className="flex gap-2">
                 <span className="font-semibold">4.</span>
-                <span>Login with your phone and password "PrimeMade"</span>
+                <span>Login with your phone and the provided default password</span>
               </li>
               <li className="flex gap-2">
                 <span className="font-semibold">5.</span>
@@ -95,7 +95,7 @@ export default function ContactAdminForReset() {
           <Alert className="border-blue-200 bg-blue-50">
             <KeyRound className="h-4 w-4 text-blue-600" />
             <AlertDescription className="text-blue-800">
-              Contact our admin team to reset your password to <strong>"PrimeMade"</strong>
+              Contact our admin team to reset your password to the corporate default password
             </AlertDescription>
           </Alert>
 
@@ -185,8 +185,8 @@ export default function ContactAdminForReset() {
               </Link>
             </div>
             
-            <div className="text-center text-xs text-muted-foreground">
-              New to Prime Pre?{' '}
+              <div className="text-center text-xs text-muted-foreground">
+              New to Cephas Cargo?{' '}
               <Link className="text-primary hover:underline font-medium" to="/simplified-signup">
                 Create an account
               </Link>

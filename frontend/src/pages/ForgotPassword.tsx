@@ -50,7 +50,7 @@ export default function ForgotPassword() {
           </div>
           <h2 className="text-4xl font-bold mb-4">Forgot Your Password?</h2>
           <p className="text-xl text-white/90 mb-8">
-            No worries! We'll instantly reset your password to "PrimeMade" so you can log back in.
+            No worries! We'll guide you to contact the admin to reset your password so you can log back in.
           </p>
           <div className="space-y-4 bg-white/10 rounded-lg p-6 backdrop-blur-sm">
             <h3 className="text-lg font-semibold flex items-center gap-2">
@@ -68,11 +68,11 @@ export default function ForgotPassword() {
               </li>
               <li className="flex gap-2">
                 <span className="font-semibold">3.</span>
-                <span>Contact the admin to reset your password to <strong>"PrimeMade"</strong></span>
+                <span>Contact the admin to reset your password to the default corporate password</span>
               </li>
               <li className="flex gap-2">
                 <span className="font-semibold">4.</span>
-                <span>Login with your phone and the password "PrimeMade"</span>
+                <span>Login with your phone and the provided default password</span>
               </li>
               <li className="flex gap-2">
                 <span className="font-semibold">5.</span>
@@ -132,12 +132,12 @@ export default function ForgotPassword() {
 
                 <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
                   <div className="flex gap-2">
-                    <KeyRound className="h-5 w-5 text-blue-600 flex-shrink-0 mt-0.5" />
-                    <div className="text-sm text-blue-800">
-                      <strong>Note:</strong> If your phone number is found, you'll receive admin contact information. 
-                      Contact them to reset your password to <strong>"PrimeMade"</strong>.
-                    </div>
-                  </div>
+                          <KeyRound className="h-5 w-5 text-blue-600 flex-shrink-0 mt-0.5" />
+                          <div className="text-sm text-blue-800">
+                            <strong>Note:</strong> If your phone number is found, you'll receive admin contact information. 
+                            Contact them to reset your password to the corporate default password.
+                          </div>
+                        </div>
                 </div>
 
                 <Button

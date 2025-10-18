@@ -543,9 +543,11 @@ def create_customer_from_data(customer_data: Dict[str, Any], created_by_user=Non
     if email:
         customer_fields['email'] = email
 
-    # Create user with default password "PrimeMade" for admin-created customers
+    # Create user with default configured password for admin-created customers
+    from django.conf import settings
+    default_pw = getattr(settings, 'DEFAULT_USER_PASSWORD', 'CephasCargo')
     return CustomerUser.objects.create_user(
         phone=phone,
-        password='PrimeMade',  # Default password for all admin-created customers
+        password=default_pw,
         **customer_fields
     )

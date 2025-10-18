@@ -22,7 +22,7 @@ if (missingEnvVars.length > 0 && import.meta.env.PROD) {
 // Environment configuration
 // Normalize the API base URL: remove trailing slashes and any trailing '/api'
 function normalizeBaseUrl(raw?: string) {
-  const fallback = 'https://primepre-logistics-system.onrender.com';
+  const fallback = 'https://cephascargo.onrender.com';
   const value = (raw || fallback).replace(/\/+$/, '');
   // If the user accidentally set the base url to include '/api', strip it so
   // endpoints like '/api/cargo/...' don't become '/api/api/cargo/...'
@@ -37,7 +37,7 @@ export const config = {
   apiBaseUrl: normalizeBaseUrl(import.meta.env.VITE_API_BASE_URL),
   
   // App Configuration
-  appName: import.meta.env.VITE_APP_NAME || 'PrimePre Logistics',
+  appName: import.meta.env.VITE_APP_NAME || 'Cephas cargo',
   environment: import.meta.env.VITE_ENVIRONMENT || 'development',
   isDevelopment: import.meta.env.DEV,
   isProduction: import.meta.env.PROD,

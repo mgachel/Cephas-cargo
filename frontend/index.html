@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>primemade</title>
+  <title>Cephas Cargo</title>
     <meta name="description" content="Premium logistics platform for cargo tracking and management" />
     <meta name="author" content="PRIMEPRE Logistics" />
 
@@ -19,13 +19,13 @@
       (function() {
         try {
           var host = window.location.hostname;
-          if (host === 'admin.primemade.org') {
-            // Change title
-            document.title = 'Powered by wavemova';
+          if (host === 'admin.cephascargo.com') {
+            // Change title for admin
+            document.title = 'Cephas Cargo Admin';
 
             // Prefer a 32x32 favicon if present, otherwise fall back to the full-size PNG
-            var prefer32 = '/wavemova_copy-32.png';
-            var fallback = '/wavemova_copy.png';
+            var prefer32 = '/cephascargo-favicon-32.png';
+            var fallback = '/cephascargo-favicon.png';
 
             function setFavicon(url) {
               var link = document.querySelector("link[rel~='icon']");
@@ -60,7 +60,7 @@
       (function() {
         try {
           var host = window.location.hostname;
-          if (host === 'admin.primemade.org') {
+          if (host === 'admin.cephascargo.com') {
             if (window.location.pathname === '/' || window.location.pathname === '/login') {
               window.location.replace('/admin/login' + window.location.search + window.location.hash);
             }

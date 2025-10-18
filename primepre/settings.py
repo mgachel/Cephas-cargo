@@ -41,14 +41,25 @@ SECURE_HSTS_PRELOAD = True
 
 ALLOWED_HOSTS = [
     "primepre-logistics-backend.herokuapp.com",
-    "primepre-logistics-backend-fb2561752d16.herokuapp.com", 
+    "primepre-logistics-backend-fb2561752d16.herokuapp.com",
     "primepre-backend.onrender.com",  # New Render backend URL
-    "admin.primemade.org",
-    "primemade.org",
-    "www.primemade.org",
+    "admin.cephascargo.com",
+    "cephascargo.com",
+    "www.cephascargo.com",
     "localhost",
     "127.0.0.1",
 ]
+
+# Allow configuring allowed hosts via environment variable (comma separated)
+env_allowed = config('DJANGO_ALLOWED_HOSTS', default='')
+if env_allowed:
+    # merge and dedupe
+    ALLOWED_HOSTS = list(dict.fromkeys(ALLOWED_HOSTS + [h.strip() for h in env_allowed.split(',') if h.strip()]))
+
+# Always ensure cephascargo domains are present when deploying to production
+if ENVIRONMENT == 'production':
+    fordomain_defaults = ['cephascargo.com', 'www.cephascargo.com', 'admin.cephascargo.com']
+    ALLOWED_HOSTS = list(dict.fromkeys(ALLOWED_HOSTS + fordomain_defaults))
 
 # Application definition
 INSTALLED_APPS = [
@@ -326,7 +337,10 @@ CORS_ALLOWED_ORIGINS = csv_list(config(
             'http://localhost:3000,'
             'http://127.0.0.1:3000,'
             'http://localhost:5173,'
-            'http://127.0.0.1:5173'
+            'http://127.0.0.1:5173,'
+            'https://cephascargo.com,'
+            'https://www.cephascargo.com,'
+            'https://admin.cephascargo.com'
 ))
 
 # Allow credentials for authentication
@@ -381,7 +395,10 @@ CSRF_TRUSTED_ORIGINS = csv_list(config(
             'https://primemade.org,'
             'https://www.primemade.org,'
             'https://*.herokuapp.com,'
-            'https://*.onrender.com'
+            'https://*.onrender.com,'
+            'https://cephascargo.com,'
+            'https://www.cephascargo.com,'
+            'https://admin.cephascargo.com'
 ))
 
 # SSL and security headers for production
@@ -392,10 +409,20 @@ if not DEBUG:
     CSRF_COOKIE_SECURE = True
     SESSION_COOKIE_SAMESITE = "None"
     CSRF_COOKIE_SAMESITE = "None"
-    # Allow cookies to be shared across subdomains (primemade.org and admin.primemade.org)
-    # NOTE: Only enable if you intentionally want session/csrf cookies shared across subdomains.
-    SESSION_COOKIE_DOMAIN = ".primemade.org"
-    CSRF_COOKIE_DOMAIN = ".primemade.org"
+    # Cookie domain can be set via environment variable for multi-domain support
+    COOKIE_DOMAIN = config('COOKIE_DOMAIN', default='')
+    if COOKIE_DOMAIN:
+        SESSION_COOKIE_DOMAIN = COOKIE_DOMAIN
+        CSRF_COOKIE_DOMAIN = COOKIE_DOMAIN
+    else:
+        # Default to cephascargo domain when deploying to production
+        if ENVIRONMENT == 'production':
+            SESSION_COOKIE_DOMAIN = '.cephascargo.com'
+            CSRF_COOKIE_DOMAIN = '.cephascargo.com'
+        else:
+            # Legacy default (cephascargo) if not specified
+            SESSION_COOKIE_DOMAIN = '.cephascargo.com'
+            CSRF_COOKIE_DOMAIN = '.cephascargo.com'
 
 # Logging configuration
 LOGGING = {
@@ -458,6 +485,9 @@ CACHES = {
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# Default password for admin-created accounts; configurable via environment
+DEFAULT_USER_PASSWORD = config('DEFAULT_USER_PASSWORD', default='CephasCargo')
 
 # Request size limits for large Excel uploads
 DATA_UPLOAD_MAX_MEMORY_SIZE = 52428800  # 50MB in bytes

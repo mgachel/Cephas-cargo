@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from django.contrib.auth.password_validation import validate_password
 from .models import CustomerUser
+from django.conf import settings
 
 class RegisterSerializer(serializers.ModelSerializer):
     confirm_password = serializers.CharField(write_only=True)
@@ -95,11 +96,11 @@ class AdminUserCreateSerializer(serializers.ModelSerializer):
         if validated_data.get('user_role') in ['ADMIN', 'STAFF', 'MANAGER', 'SUPER_ADMIN']:
             validated_data['is_verified'] = True
         
-        # Auto-verify customers created by admin and set default password to "PrimeMade"
+        # Auto-verify customers created by admin and set default password
         elif validated_data.get('user_role') == 'CUSTOMER':
             validated_data['is_verified'] = True
-            # Set password to "PrimeMade" if not provided or if provided, override it
-            validated_data['password'] = 'PrimeMade'
+            # Set password to configured default if not provided or override it
+            validated_data['password'] = getattr(settings, 'DEFAULT_USER_PASSWORD', 'CephasCargo')
             
         return CustomerUser.objects.create_user(**validated_data)
 

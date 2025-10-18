@@ -89,7 +89,7 @@ const App = () => (
           <Routes>
             {/* Public auth routes */}
             <Route path="/login" element={<Login />} />
-            {/* Admin login (served on admin.primemade.org) */}
+            {/* Admin login (served on admin.cephascargo.com) */}
             <Route path="/admin/login" element={<AdminLogin />} />
             {/* New simplified signup */}
             <Route path="/signup" element={<SimplifiedSignup />} />

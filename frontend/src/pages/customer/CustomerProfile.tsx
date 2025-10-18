@@ -207,10 +207,10 @@ const CustomerProfile: React.FC = () => {
     }
 
     // Check if trying to use the default password
-    if (passwordData.new_password === 'PrimeMade') {
+    if (passwordData.new_password === 'CephasCargo') {
       toast({
         title: "Weak Password",
-        description: "Please choose a different password. 'PrimeMade' is the default password and should be changed.",
+        description: "Please choose a different password. The corporate default password should be changed.",
         variant: "destructive",
       });
       return;
@@ -522,7 +522,7 @@ const CustomerProfile: React.FC = () => {
                 <Lock className="h-5 w-5 text-blue-600 flex-shrink-0 mt-0.5" />
                 <div className="text-sm text-blue-800">
                   <p className="font-semibold mb-1">First time changing your password?</p>
-                  <p>If your account was created by an administrator or you recently used the "Forgot Password" feature, your current password is <strong>"PrimeMade"</strong>. We recommend changing it to a unique, secure password.</p>
+                  <p>If your account was created by an administrator or you recently used the "Forgot Password" feature, your current password may be the corporate default password. We recommend changing it to a unique, secure password.</p>
                 </div>
               </div>
             </div>
@@ -559,7 +559,7 @@ const CustomerProfile: React.FC = () => {
                     </Button>
                   </div>
                   <p className="text-xs text-muted-foreground mt-1">
-                    If you haven't changed it yet, use "PrimeMade"
+                    If you haven't changed it yet, use the corporate default password provided by the admin.
                   </p>
                 </div>
 

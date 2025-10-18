@@ -67,7 +67,7 @@ export const authService = {
   console.log('📡 AuthService: Making login request to server...');
   // If frontend is served from admin subdomain, use admin-login endpoint
   const host = typeof window !== 'undefined' ? window.location.hostname : '';
-  const isAdminHost = host === 'admin.primemade.org' || host.endsWith('.admin.primemade.org');
+  const isAdminHost = host === 'admin.cephascargo.com' || host.endsWith('.admin.cephascargo.com');
   const loginEndpoint = isAdminHost ? '/api/auth/admin-login/' : '/api/auth/login/';
   const response = await apiClient.post<LoginResponse>(loginEndpoint, credentials);
       

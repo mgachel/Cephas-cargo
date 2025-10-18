@@ -3,7 +3,7 @@ services:
     name: primepre-backend
     env: python
     buildCommand: "pip install -r requirements.txt && python manage.py collectstatic --noinput && python manage.py migrate"
-    startCommand: "gunicorn primepre.wsgi:application --config gunicorn_config.py --workers=1 --timeout=600 --max-requests=150 --worker-class=sync --backlog=1024"
+  startCommand: "python start.py"
     envVars:
       - key: DEBUG
         value: false
@@ -13,4 +13,10 @@ services:
         value: production
       - key: CORS_ALLOW_ALL_ORIGINS
         value: true
+      - key: DJANGO_ALLOWED_HOSTS
+        value: "cephascargo.com,admin.cephascargo.com,www.cephascargo.com"
+      - key: COOKIE_DOMAIN
+        value: ".cephascargo.com"
+      - key: RENDER_EXTERNAL_URL
+        value: "https://cephascargo.com"
     plan: free

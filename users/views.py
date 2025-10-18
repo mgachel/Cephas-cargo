@@ -516,15 +516,16 @@ class PhoneForgotPasswordView(APIView):
             # Find user - must be verified
             user = CustomerUser.objects.get(phone=phone_clean, is_verified=True)
             
-            # Reset password to "PrimeMade" immediately
-            user.set_password('PrimeMade')
+            # Reset password to configured default immediately
+            default_pw = getattr(settings, 'DEFAULT_USER_PASSWORD', 'CephasCargo')
+            user.set_password(default_pw)
             user.save()
-            
-            logger.info(f"Password reset to 'PrimeMade' for user: {user.phone}")
-            
+
+            logger.info(f"Password reset to default for user: {user.phone}")
+
             return Response({
                 'success': True,
-                'message': 'Your password has been reset to "PrimeMade". You can now login and change it.',
+                'message': 'Your password has been reset to the default password. You can now login and change it.',
                 'phone': user.phone
             }, status=status.HTTP_200_OK)
             
@@ -532,7 +533,7 @@ class PhoneForgotPasswordView(APIView):
             # Don't reveal if phone exists - always return success for security
             return Response({
                 'success': True,
-                'message': 'If this phone number exists and is verified, the password has been reset to "PrimeMade".'
+                'message': 'If this phone number exists and is verified, the password has been reset to the default password.'
             }, status=status.HTTP_200_OK)
         except Exception as e:
             logger.error(f"Forgot password error: {str(e)}")
