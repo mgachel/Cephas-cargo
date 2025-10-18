@@ -46,6 +46,7 @@ ALLOWED_HOSTS = [
     "admin.cephascargo.com",
     "cephascargo.com",
     "www.cephascargo.com",
+    "cephas-cargo-backend.onrender.com",    # New Render backend URL
     "localhost",
     "127.0.0.1",
 ]
@@ -398,6 +399,7 @@ CSRF_TRUSTED_ORIGINS = csv_list(config(
             'https://*.onrender.com,'
             'https://cephascargo.com,'
             'https://www.cephascargo.com,'
+            'https://cephas-cargo-backend.onrender.com,'
             'https://admin.cephascargo.com'
 ))
 
