@@ -38,13 +38,13 @@ export default function ChinaWarehouse() {
   const [showNewGoodsDialog, setShowNewGoodsDialog] = useState(false);
   const [search, setSearch] = useState("");
   const [status, setStatus] = useState<
-    | "all"
+    | /*"all"
     | "PENDING"
     | "READY_FOR_SHIPPING"
     | "FLAGGED"
     | "SHIPPED"
-    | "CANCELLED"
-  >("all");
+    | "CANCELLED" 
+  >("all")*/;
   const [loading, setLoading] = useState(true);
   const [items, setItems] = useState<WarehouseItem[]>([]);
   const [page, setPage] = useState(1);

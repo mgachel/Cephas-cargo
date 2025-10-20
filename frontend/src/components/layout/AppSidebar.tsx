@@ -126,7 +126,7 @@ export function AppSidebar({ isCollapsed, onToggle, isMobile, mobileMenuOpen }: 
             <img
               src={isCustomer() ? "/CCL_LOGO_TP.png" : "/wavemova_0.png"}
               alt="Cephas Cargo Logo"
-              className={isCustomer() ? "h-13 object-contain" : "h-13 object-contain"}
+              className={isCustomer() ? "h-12.2" : "h-12.2"}
             />
           )}
         </div>
