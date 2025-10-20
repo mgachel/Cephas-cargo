@@ -529,8 +529,8 @@ export default function SeaCargo() {
           >
             <RefreshCcw className="h-3 w-3 sm:h-4 sm:w-4 mr-1" style={{ color: primaryColor }} /> Reset
           </Button>
-          */}
         </div>
+        */}
       </div>
 
       {/* Cargo Table */}
