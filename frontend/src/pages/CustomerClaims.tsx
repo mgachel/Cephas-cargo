@@ -241,7 +241,7 @@ export default function CustomerClaims() {
     }
   };
 
-  /* Filter claims
+  // Filter claims
   const filteredClaims = (claims || []).filter(claim => {
     const matchesSearch = searchTerm === '' || 
       claim.tracking_id.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -270,8 +270,6 @@ export default function CustomerClaims() {
         return <FileText className="h-4 w-4" />;
     }
   };
-
-  */
 
   // Get status badge variant
   const getStatusBadgeVariant = (status: string): "default" | "secondary" | "destructive" | "outline" => {
@@ -566,6 +564,7 @@ export default function CustomerClaims() {
                 />
               </div>
             </div>
+            {/*
             <Select value={statusFilter} onValueChange={setStatusFilter}>
               <SelectTrigger className="w-[180px]">
                 <Filter className="h-4 w-4 mr-2" />
@@ -580,6 +579,7 @@ export default function CustomerClaims() {
                 <SelectItem value="REJECTED">Rejected</SelectItem>
               </SelectContent>
             </Select>
+            */}
             <Button variant="outline" size="sm" onClick={loadClaims} disabled={loading}>
               <RefreshCw className={`h-4 w-4 ${loading ? 'animate-spin' : ''}`} />
             </Button>
