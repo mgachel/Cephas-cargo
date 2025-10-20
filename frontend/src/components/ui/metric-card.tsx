@@ -1,9 +1,10 @@
+import React from "react";
 import { LucideIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface MetricCardProps {
   title: string;
-  value: string | number;
+  value: React.ReactNode;
   change?: {
     value: string;
     type: "increase" | "decrease" | "neutral";
