@@ -101,8 +101,8 @@ export default function Login() {
           <div className="flex items-center mb-8">
             <div>
               <img
-                src="/primepre-logo.png"
-                alt="Prime Pre Logistics Platform"
+                src="/CCL_LOGO_TP.png"
+                alt="Cephas Cargo Platform"
                 className="mb-8 w-64 h-auto"
               />
             </div>
@@ -158,8 +158,8 @@ export default function Login() {
           {/* Logo for both mobile and normal view */}
           <div className="text-center mb-6">
             <img
-              src="/prime_new_BLACK.png"
-              alt="Prime Pre Logo"
+              src="/CCL_LOGO_TP.png"
+              alt="Cephas Cargo Logo"
               className="w-40 h-auto mx-auto mb-4"
             />
           </div>
