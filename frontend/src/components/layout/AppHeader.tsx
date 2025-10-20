@@ -76,7 +76,7 @@ export function AppHeader({ sidebarCollapsed, onToggle, isMobile, mobileMenuOpen
             <img
               src="/CCL_LOGO_TP.png"
               alt="Client Search Logo"
-              className="h-13"
+              className="h-11"
             />
           </div>
         ) : (
