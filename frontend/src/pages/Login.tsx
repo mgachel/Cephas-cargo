@@ -159,7 +159,7 @@ export default function Login() {
           <div className="text-center mb-6">
             <img
               src="/CCL_LOGO_TP.png"
-              alt="Cephas Cargo Logo"
+              alt="Cephas Cargo Logos"
               className="w-40 h-auto mx-auto mb-4"
             />
           </div>

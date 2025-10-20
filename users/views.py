@@ -856,14 +856,14 @@ class GenerateShippingMarksView(APIView):
                     base_mark = f"PM{prefix_val} {name_combo}".strip()
                 else:
                     # Default format
-                    base_mark = f"PM {name_combo}"
+                    base_mark = f"DC {name_combo}"
                 
                 # Normalize whitespace and ensure the format PM{prefix} + space + rest.
                 # We must not consume the entire name when extracting the prefix, so use
                 # a regex that captures PM, an optional alphanumeric prefix, then the rest.
                 import re
                 base_mark = ' '.join(base_mark.split())
-                m = re.match(r'^(PM)([A-Z0-9]*)(?:\s*)(.*)$', base_mark, re.IGNORECASE)
+                m = re.match(r'^(DC)([A-Z0-9]*)(?:\s*)(.*)$', base_mark, re.IGNORECASE)
                 if m:
                     pm = m.group(1).upper()
                     prefix = (m.group(2) or '').upper()
@@ -932,16 +932,16 @@ class GenerateShippingMarksView(APIView):
                         
                         if is_unique:
                             # Also check if the name portion (after PM prefix) already exists
-                            # Extract the name portion (everything after "PM" + optional digits + space)
+                            # Extract the name portion (everything after "DC" + optional digits + space)
                             import re
-                            name_match = re.search(r'^PM\d*\s*(.+)$', base_mark)
+                            name_match = re.search(r'^DC\d*\s*(.+)$', base_mark)
                             if name_match:
                                 name_portion = name_match.group(1).strip()
                                 
                                 # Check if any shipping mark ends with this name portion
-                                # This prevents "PM1 JOHDOE" and "PM6 JOHDOE" both being suggested
+                                # This prevents "DC1 JOHDOE" and "DC6 JOHDOE" both being suggested
                                 similar_exists = CustomerUser.objects.filter(
-                                    shipping_mark__iregex=r'PM\d*\s*' + re.escape(name_portion) + r'$'
+                                    shipping_mark__iregex=r'DC\d*\s*' + re.escape(name_portion) + r'$'
                                 ).exists()
                                 
                                 if similar_exists:
@@ -976,23 +976,23 @@ class GenerateShippingMarksView(APIView):
                         prefix_val = str(rule.prefix_value).upper()
                     except Exception:
                         prefix_val = str(getattr(rule, 'prefix_value', '')).upper()
-                    base_mark = f"PM{prefix_val} {extended_combo}".strip()
+                    base_mark = f"DC{prefix_val} {extended_combo}".strip()
                 else:
-                    base_mark = f"PM {extended_combo}"
-                
-                # Normalize whitespace and ensure the format PM{prefix} + space + rest.
+                    base_mark = f"DC {extended_combo}"
+
+                # Normalize whitespace and ensure the format DC{prefix} + space + rest.
                 import re
                 base_mark = ' '.join(base_mark.split())
-                m = re.match(r'^(PM)([A-Z0-9]*)(?:\s*)(.*)$', base_mark, re.IGNORECASE)
+                m = re.match(r'^(DC)([A-Z0-9]*)(?:\s*)(.*)$', base_mark, re.IGNORECASE)
                 if m:
-                    pm = m.group(1).upper()
+                    dc = m.group(1).upper()
                     prefix = (m.group(2) or '').upper()
                     rest = (m.group(3) or '').strip()
                     if prefix:
-                        base_mark = f"{pm}{prefix} {rest}" if rest else f"{pm}{prefix}"
+                        base_mark = f"{dc}{prefix} {rest}" if rest else f"{dc}{prefix}"
                     else:
-                        base_mark = f"{pm} {rest}" if rest else pm
-                
+                        base_mark = f"{dc} {rest}" if rest else dc
+
                 # Apply length constraints (10-20 characters)
                 current_len = len(base_mark)
                 if current_len < min_length:
@@ -1018,11 +1018,11 @@ class GenerateShippingMarksView(APIView):
                         if is_unique:
                             # Check name portion uniqueness
                             import re
-                            name_match = re.search(r'^PM\d*\s*(.+)$', base_mark)
+                            name_match = re.search(r'^DC\d*\s*(.+)$', base_mark)
                             if name_match:
                                 name_portion = name_match.group(1).strip()
                                 similar_exists = CustomerUser.objects.filter(
-                                    shipping_mark__iregex=r'PM\d*\s*' + re.escape(name_portion) + r'$'
+                                    shipping_mark__iregex=r'DC\d*\s*' + re.escape(name_portion) + r'$'
                                 ).exists()
                                 
                                 if similar_exists:
@@ -1135,12 +1135,12 @@ class SignupWithShippingMarkView(APIView):
                 # Validate shipping mark format (must start with PM followed by optional alphanumeric prefix)
                 # Accept formats: "PM ", "PM-", "PM 1 ", "PM GA ", "PM NR ", "PMX4E ", "PM16 ", etc.
                 import re
-                # Pattern: PM followed by optional alphanumeric prefix, then space and name
-                if not re.match(r'^PM\s*[A-Z0-9]*\s+[A-Z]', shipping_mark):
+                # Pattern: DC followed by optional alphanumeric prefix, then space and name
+                if not re.match(r'^DC\s*[A-Z0-9]*\s+[A-Z]', shipping_mark):
                     return Response({
                         'success': False,
                         'error': 'Invalid shipping mark format',
-                        'message': f'Shipping mark must start with "PM" optionally followed by a regional prefix (letters or numbers), then a space and name. Got: {shipping_mark}'
+                        'message': f'Shipping mark must start with "DC" optionally followed by a regional prefix (letters or numbers), then a space and name. Got: {shipping_mark}'
                     }, status=status.HTTP_400_BAD_REQUEST)
                 
                 # Create user with selected shipping mark

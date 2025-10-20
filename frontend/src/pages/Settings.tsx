@@ -224,8 +224,8 @@ export default function Settings() {
   const [warehousesLoading, setWarehousesLoading] = useState(true);
 
   const [shippingMarkRules, setShippingMarkRules] = useState({
-    defaultPrefix: "PM",
-    defaultFormat: "PM + CLIENT_NAME"
+    defaultPrefix: "DC",
+    defaultFormat: "DC + CLIENT_NAME"
   });
 
   const [regionalRules, setRegionalRules] = useState<ShippingMarkRule[]>([]);
@@ -508,7 +508,7 @@ export default function Settings() {
       country: "Ghana",
       region: "",
       prefix_value: nextPrefix,
-      format_template: "PM{prefix}{name}",
+      format_template: "DC{prefix}{name}",
       priority: 1,
       is_active: true,
       is_default: false,
@@ -562,7 +562,7 @@ export default function Settings() {
           country: editingRegionalRule.country,
           region: editingRegionalRule.region,
           prefix_value: editingRegionalRule.prefix_value,
-          format_template: "PM{prefix}{name}",
+          format_template: "DC{prefix}{name}",
           is_active: editingRegionalRule.is_active,
           priority: editingRegionalRule.priority,
           is_default: false
@@ -1469,8 +1469,8 @@ export default function Settings() {
                 </div>
               </div>
               <div className="text-xs text-muted-foreground p-3 bg-muted rounded-lg">
-                <strong>How it works:</strong> The system will use "PM{`{prefix value}`} {`{name}`}" as the shipping mark format. 
-                For example, if Prefix Value is "1", shipping marks will be "PM1 JODO" (with space).
+                <strong>How it works:</strong> The system will use "DC{`{prefix value}`} {`{name}`}" as the shipping mark format. 
+                For example, if Prefix Value is "1", shipping marks will be "DC1 JODO" (with space).
               </div>
             </div>
           )}
