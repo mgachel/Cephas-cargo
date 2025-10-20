@@ -114,12 +114,12 @@ export default function SimplifiedSignup() {
         <div className="relative z-10 flex flex-col justify-center px-12 text-white">
           <div className="flex items-center mb-8">
             <div>
-              <img src="/primepre-logo.png" alt="Prime Pre Logistics Platform" className="mb-8 w-64 h-auto" />
+              <img src="/CCL_LOGO_TP.png" alt="Cephas Cargo Logo" className="mb-8 w-64 h-auto" />
             </div>
           </div>
           <h2 className="text-4xl font-bold mb-4">Create your account</h2>
           <p className="text-xl text-white/90 mb-8">
-            Join Prime Pre Logistics to manage your shipments and inventory. 
+            Join Cephas Cargo to manage your shipments and inventory. 
             Your shipping mark will be automatically generated for you.
           </p>
           
