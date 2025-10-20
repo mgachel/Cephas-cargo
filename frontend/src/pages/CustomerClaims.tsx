@@ -241,7 +241,7 @@ export default function CustomerClaims() {
     }
   };
 
-  // Filter claims
+  /* Filter claims
   const filteredClaims = (claims || []).filter(claim => {
     const matchesSearch = searchTerm === '' || 
       claim.tracking_id.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -270,6 +270,8 @@ export default function CustomerClaims() {
         return <FileText className="h-4 w-4" />;
     }
   };
+
+  */
 
   // Get status badge variant
   const getStatusBadgeVariant = (status: string): "default" | "secondary" | "destructive" | "outline" => {
