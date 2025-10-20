@@ -319,7 +319,7 @@ export default function GoodsReceivedContainerDetailsPage() {
     pdf.setFont('helvetica', 'bold');
     pdf.text('LOCATION:', 14, yPos);
     pdf.setFont('helvetica', 'normal'); 
-  pdf.text('Cephas Cargo (on Google Maps)', 50, yPos);
+    pdf.text('Cephas Cargo (on Google Maps), Get a car to Atomic Junction or Haatso, From there Agbogba car and drop at Ahmadiya ', 50, yPos);
 
 
     // Invoice details - Right side
