@@ -192,7 +192,7 @@ export default function Settings() {
     email: "admin@primepre.com",
     phone: "+233 50 000 6635",
     region: "greater-accra",
-    company: "Prime Pre Limited",
+    company: "Cephas Cargo and logistics",
     role: "Super Admin",
     warehouseAccess: ["China Warehouse", "Ghana Warehouse"],
     accountStatus: "Active",
@@ -207,7 +207,7 @@ export default function Settings() {
   const [invoiceSettings, setInvoiceSettings] = useState({
     themeColor: "#1e40af",
     invoiceNumberFormat: "INV-{YYYY}-{MM}-{###}",
-    invoiceNotes: "Thank you for choosing Prime Pre Limited for your logistics needs."
+    invoiceNotes: "Thank you for Cephas Cargo and logistics for your logistics needs."
   });
 
   const [offices, setOffices] = useState<Office[]>([
@@ -837,7 +837,7 @@ export default function Settings() {
                       </SelectTrigger>
                       <SelectContent>
                         <SelectItem value="INV-YYYY-MM-###">INV-&#123;YYYY&#125;-&#123;MM&#125;-&#123;###&#125;</SelectItem>
-                        <SelectItem value="PRIME-YYYYMMDD-###">PRIME-&#123;YYYY&#125;&#123;MM&#125;&#123;DD&#125;-&#123;###&#125;</SelectItem>
+                        <SelectItem value="DC-YYYYMMDD-###">DC-&#123;YYYY&#125;&#123;MM&#125;&#123;DD&#125;-&#123;###&#125;</SelectItem>
                         <SelectItem value="YYYY-INV-###">&#123;YYYY&#125;-INV-&#123;###&#125;</SelectItem>
                       </SelectContent>
                     </Select>
@@ -869,7 +869,7 @@ export default function Settings() {
                     </div>
                   </div>
                   <div className="space-y-2 text-sm">
-                    <p><strong>From:</strong> Prime Pre Limited</p>
+                    <p><strong>From:</strong> Cephas Cargo and logistics</p>
                     <p><strong>To:</strong> Sample Client</p>
                     <p><strong>Date:</strong> 15 Sep 2025</p>
                   </div>
