@@ -645,8 +645,9 @@ export default function Settings() {
             {/*
             <TabsTrigger value="invoice" className="text-xs lg:text-sm">Invoice</TabsTrigger>
             <TabsTrigger value="offices" className="text-xs lg:text-sm">Offices</TabsTrigger>
+            */}
             <TabsTrigger value="warehouses" className="text-xs lg:text-sm">Warehouses</TabsTrigger>
-              */}
+              
             <TabsTrigger value="shipping-marks" className="text-xs lg:text-sm col-span-2 lg:col-span-1">Shipping Marks</TabsTrigger>
           </TabsList>
         </div>
