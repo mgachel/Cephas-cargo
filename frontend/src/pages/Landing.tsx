@@ -6,7 +6,7 @@ export default function Landing() {
     <div className="min-h-screen bg-white text-slate-800">
       <header className="max-w-7xl mx-auto px-6 py-8 flex items-center justify-between">
         <div className="flex items-center space-x-4">
-          <img src="/CCL_LOGO_TP.png" alt="Cephas Cargo" className="h-10 w-auto" />
+          <img src="/CCL_LOGO_TP.png" alt="Cephas Cargo" className="h-20 w-auto" />
           <div>
             <h3 className="text-lg font-semibold">Cephas Cargo and Logistics</h3>
             <p className="text-xs text-slate-500">Logistics platform for sea & air shipments</p>

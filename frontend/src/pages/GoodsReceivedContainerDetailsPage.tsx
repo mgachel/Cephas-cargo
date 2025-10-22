@@ -887,7 +887,7 @@ export default function GoodsReceivedContainerDetailsPage() {
       {/* Invoice Preview Dialog */}
       {showInvoicePreview && previewInvoiceData && (
         <Dialog open={showInvoicePreview} onOpenChange={setShowInvoicePreview}>
-          <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+    <DialogContent className="max-w-3xl w-full mx-4">
             <DialogHeader>
               <div className="flex items-center justify-between">
                 <DialogTitle>Invoice Preview</DialogTitle>
@@ -902,7 +902,7 @@ export default function GoodsReceivedContainerDetailsPage() {
               </div>
             </DialogHeader>
             
-            <div className="bg-white p-8 rounded-lg border">
+            <div className="bg-white p-6 rounded-lg border">
               {/* Logo */}
               <div className="flex justify-center mb-6">
                 <img 
@@ -947,24 +947,33 @@ export default function GoodsReceivedContainerDetailsPage() {
                   </div>
                 </div>
 
-                {/* Right Side - compact two-column grid for label/value proximity */}
-                <div className="space-y-2" style={{ justifySelf: 'end', textAlign: 'right' }}>
+                {/* Right Side - right-aligned details (clean, non-distorted) */}
+                <div className="space-y-3 text-right">
                   <h2 className="text-lg font-bold">Invoice #{previewInvoiceData.invoiceNumber}</h2>
-                  <div className="grid" style={{ gridTemplateColumns: 'max-content auto', columnGap: '2px', rowGap: '2px', alignItems: 'center', justifyItems: 'start', justifySelf: 'end' }}>
-                    <div className="text-sm font-semibold">Date:</div>
+
+                  <div className="flex justify-end gap-4">
+                    <div className="text-sm font-semibold text-slate-700">Date:</div>
                     <div className="text-sm">{new Date().toLocaleDateString()}</div>
+                  </div>
 
-                    <div className="text-sm font-semibold">Total Amount:</div>
+                  <div className="flex justify-end gap-4 items-baseline">
+                    <div className="text-sm font-semibold text-slate-700">Total Amount:</div>
                     <div className="text-lg font-bold text-green-600">GH₵ {previewInvoiceData.totalAmount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
+                  </div>
 
-                    <div className="text-sm font-semibold">MOMO:</div>
+                  <div className="flex justify-end gap-4">
+                    <div className="text-sm font-semibold text-slate-700">MOMO:</div>
                     <div className="text-sm">MTN: 054 029 5187</div>
+                  </div>
 
-                    <div className="text-sm font-semibold">BANK - UBA:</div>
+                  <div className="flex justify-end gap-4">
+                    <div className="text-sm font-semibold text-slate-700">BANK - UBA:</div>
                     <div className="text-sm">00115148103503</div>
+                  </div>
 
-                    <div className="text-sm font-semibold">CBO HEAD OFFICE</div>
-                    <div className="text-sm">&nbsp;</div>
+                  <div className="flex justify-end gap-4">
+                    <div className="text-sm font-semibold text-slate-700">Office</div>
+                    <div className="text-sm">CBO Head Office</div>
                   </div>
                 </div>
               </div>

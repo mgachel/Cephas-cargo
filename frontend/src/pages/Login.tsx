@@ -68,7 +68,7 @@ export default function Login() {
     <div className="min-h-screen bg-surface-50 flex items-center justify-center px-4">
       <div className="w-full max-w-md">
         <div className="text-center mb-6">
-          <img src="/CCL_LOGO_TP.png" alt="Cephas Cargo" className="w-32 h-auto mx-auto" />
+          <img src="/CCL_LOGO_TP.png" alt="Cephas Cargo" className="w-32.5 h-auto mx-auto" />
           <h1 className="mt-4 text-2xl font-semibold">Sign in to Cephas Cargo</h1>
           <p className="mt-1 text-sm text-muted-foreground">Manage shipments, containers and claims</p>
         </div>
