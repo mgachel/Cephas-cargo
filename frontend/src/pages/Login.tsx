@@ -39,7 +39,7 @@ export default function Login() {
 
     if (success) {
       const userData = localStorage.getItem('user');
-      let redirectUrl = '/';
+      let redirectUrl = '/customer/cargo/sea';
 
       if (userData) {
         try {
@@ -52,7 +52,7 @@ export default function Login() {
             redirectUrl = '/customer/cargo/sea';
           }
         } catch (error) {
-          redirectUrl = '/customer/cargo/sea';
+          redirectUrl = '/';
         }
       }
 
