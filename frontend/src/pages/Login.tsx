@@ -52,7 +52,7 @@ export default function Login() {
             redirectUrl = '/customer/cargo/sea';
           }
         } catch (error) {
-          redirectUrl = '/';
+          redirectUrl = '/customer/cargo/sea';
         }
       }
 
