@@ -887,22 +887,27 @@ export default function GoodsReceivedContainerDetailsPage() {
       {/* Invoice Preview Dialog */}
       {showInvoicePreview && previewInvoiceData && (
         <Dialog open={showInvoicePreview} onOpenChange={setShowInvoicePreview}>
-          <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
-            <DialogHeader>
-              <div className="flex items-center justify-between">
+          {/* Reduced width and removed internal overflow so header/buttons remain visible */}
+          <DialogContent className="max-w-3xl w-full mx-4">
+            {/* Make header sticky so action button is always visible when content scrolls */}
+            <DialogHeader className="sticky top-0 z-20 bg-surface-50/80 backdrop-blur-sm">
+              <div className="flex items-center justify-between px-2 py-2">
                 <DialogTitle>Invoice Preview</DialogTitle>
-                <Button
-                  variant="default"
-                  size="sm"
-                  onClick={handleDownloadPDF}
-                  className="ml-4"
-                >
-                  Download PDF
-                </Button>
+                <div className="flex items-center">
+                  <Button
+                    variant="default"
+                    size="sm"
+                    onClick={handleDownloadPDF}
+                    className="ml-4"
+                  >
+                    Download PDF
+                  </Button>
+                </div>
               </div>
             </DialogHeader>
-            
-            <div className="bg-white p-8 rounded-lg border">
+
+            {/* Keep the content area scrollable if it overflows the viewport */}
+            <div className="bg-white p-6 rounded-lg border max-h-[78vh] overflow-y-auto">
               {/* Logo */}
               <div className="flex justify-center mb-6">
                 <img 
