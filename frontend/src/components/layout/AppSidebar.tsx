@@ -32,7 +32,6 @@ interface SidebarProps {
 // Admin/Super Admin Navigation
 const adminNavigation = [
   { name: "Dashboard", href: "/", icon: LayoutDashboard },
-  { name: "Client Announcements", href: "/admin/daily-updates", icon: Bell },
   { name: "Clients", href: "/clients", icon: Users },
   {
     name: "Cargo",
@@ -64,7 +63,6 @@ const adminNavigation = [
 
 // Customer Navigation
 const customerNavigation = [
-  { name: "Dashboard", href: "/", icon: LayoutDashboard },
   { name: "My Goods", href: "/customer/cargo/sea", icon: Ship },
   { name: "Invoices", href: "/goods/ghana/sea", icon: Package },
   { name: "Daily Updates", href: "/daily-updates/sea-goods", icon: Bell },
