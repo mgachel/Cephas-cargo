@@ -2,16 +2,15 @@ import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { User, Building, Phone, Mail, MapPin, Eye, EyeOff, ArrowRight } from 'lucide-react';
+import { Eye, EyeOff, ArrowRight } from 'lucide-react';
 import * as z from 'zod';
 
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 
 import { useAuthStore } from '@/stores/authStore';
 import { useToast } from '@/hooks/use-toast';
@@ -70,7 +69,6 @@ export default function SimplifiedSignup() {
   const {
     register,
     handleSubmit,
-    watch,
     setValue,
     formState: { errors },
   } = useForm<SimplifiedSignupData>({
@@ -80,26 +78,19 @@ export default function SimplifiedSignup() {
     },
   });
 
-  const userType = watch('user_type');
-
   const onSubmit = async (data: SimplifiedSignupData) => {
     try {
       setIsLoading(true);
       clearError();
-      
-      // Instead of creating account, navigate to shipping mark selection
-      // Pass the signup data to the next page
-      navigate('/signup/select-shipping-mark', {
-        state: {
-          signupData: data
-        }
-      });
+
+  // Navigate to the shipping mark selection step with the signup data
+  navigate('/signup/select-shipping-mark', { state: { signupData: data } });
     } catch (error) {
       console.error('Signup error:', error);
       toast({
-        title: "Error",
+        title: 'Error',
         description: 'An unexpected error occurred. Please try again.',
-        variant: "destructive",
+        variant: 'destructive',
       });
     } finally {
       setIsLoading(false);
@@ -107,255 +98,101 @@ export default function SimplifiedSignup() {
   };
 
   return (
-    <div className="min-h-screen flex">
-      {/* Left Side - Branding */}
-      <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-primary to-primary/80 relative overflow-hidden">
-        <div className="absolute inset-0 bg-black/20"></div>
-        <div className="relative z-10 flex flex-col justify-center px-12 text-white">
-          <div className="flex items-center mb-8">
-            <div>
-              <img src="/CCL_LOGO_TP.png" alt="Cephas Cargo Logo" className="mb-8 w-64 h-auto" />
-            </div>
-          </div>
-          <h2 className="text-4xl font-bold mb-4">Create your account</h2>
-          <p className="text-xl text-white/90 mb-8">
-            Join Cephas Cargo to manage your shipments and inventory. 
-            Your shipping mark will be automatically generated for you.
-          </p>
-          
-          <div className="bg-white/10 p-6 rounded-lg backdrop-blur-sm">
-            <h3 className="text-lg font-semibold mb-2">✨ New Simplified Process</h3>
-            <ul className="space-y-2 text-white/80">
-              <li>• One simple form - no multiple steps</li>
-              <li>• Auto-generated shipping marks</li>
-              <li>• Instant account activation</li>
-              <li>• No SMS verification required</li>
-            </ul>
-          </div>
+    <div className="min-h-screen bg-surface-50 flex items-center justify-center px-4">
+      <div className="w-full max-w-md">
+        <div className="text-center mb-6">
+          <img src="/CCL_LOGO_TP.png" alt="Cephas Cargo" className="w-28 h-auto mx-auto" />
+          <h1 className="mt-4 text-2xl font-semibold">Create an account</h1>
+          <p className="mt-1 text-sm text-muted-foreground">Simple signup to manage your shipments</p>
         </div>
-      </div>
 
-      {/* Right Side - Signup Form */}
-      <div className="flex-1 flex items-center justify-center p-8">
-        <div className="w-full max-w-md">
-          <Card>
-            <CardHeader className="text-center">
-              <CardTitle className="text-2xl">Create Account</CardTitle>
-              <CardDescription>
-                Fill in your details to get started. Your shipping mark will be automatically generated.
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-                {/* Error Alert */}
-                {error && (
-                  <Alert variant="destructive">
-                    <AlertDescription>{error}</AlertDescription>
-                  </Alert>
-                )}
+        <Card className="shadow-md">
+          <CardContent className="p-6">
+            <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+              {error && (
+                <Alert variant="destructive">
+                  <AlertDescription>{error}</AlertDescription>
+                </Alert>
+              )}
 
-                {/* User Type Selection */}
-                <div className="space-y-3">
-                  <Label>Account Type</Label>
-                  <RadioGroup
-                    value={userType}
-                    onValueChange={(value) => setValue('user_type', value as 'INDIVIDUAL' | 'BUSINESS')}
-                    className="flex flex-row space-x-6"
-                  >
-                    <div className="flex items-center space-x-2">
-                      <RadioGroupItem value="INDIVIDUAL" id="individual" />
-                      <Label htmlFor="individual" className="flex items-center space-x-2 cursor-pointer">
-                        <User className="h-4 w-4" />
-                        <span>Individual</span>
-                      </Label>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <RadioGroupItem value="BUSINESS" id="business" />
-                      <Label htmlFor="business" className="flex items-center space-x-2 cursor-pointer">
-                        <Building className="h-4 w-4" />
-                        <span>Business</span>
-                      </Label>
-                    </div>
-                  </RadioGroup>
+              <div>
+                <Label htmlFor="first_name">First name</Label>
+                <Input id="first_name" {...register('first_name')} placeholder="John" />
+                {errors.first_name && <p className="text-sm text-red-600 mt-1">{errors.first_name.message}</p>}
+              </div>
+
+              <div>
+                <Label htmlFor="last_name">Last name</Label>
+                <Input id="last_name" {...register('last_name')} placeholder="Doe" />
+                {errors.last_name && <p className="text-sm text-red-600 mt-1">{errors.last_name.message}</p>}
+              </div>
+
+              <div>
+                <Label htmlFor="email">Email</Label>
+                <Input id="email" type="email" {...register('email')} placeholder="john@example.com" />
+                {errors.email && <p className="text-sm text-red-600 mt-1">{errors.email.message}</p>}
+              </div>
+
+              <div>
+                <Label htmlFor="phone">Phone</Label>
+                <Input id="phone" {...register('phone')} placeholder="+233 501 234567" />
+                {errors.phone && <p className="text-sm text-red-600 mt-1">{errors.phone.message}</p>}
+              </div>
+
+              <div>
+                <Label htmlFor="region">Region</Label>
+                <Select onValueChange={(value) => setValue('region', value)}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select your region" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {REGION_CHOICES.map((region) => (
+                      <SelectItem key={region.value} value={region.value}>
+                        {region.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                {errors.region && <p className="text-sm text-red-600 mt-1">{errors.region.message}</p>}
+              </div>
+
+              <div>
+                <Label htmlFor="password">Password</Label>
+                <div className="relative">
+                  <Input id="password" type={showPassword ? 'text' : 'password'} {...register('password')} placeholder="••••••••" />
+                  <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600">
+                    {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                  </button>
                 </div>
+                {errors.password && <p className="text-sm text-red-600 mt-1">{errors.password.message}</p>}
+              </div>
 
-                {/* Name Fields */}
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="first_name">First Name</Label>
-                    <Input
-                      id="first_name"
-                      {...register('first_name')}
-                      placeholder="John"
-                    />
-                    {errors.first_name && (
-                      <p className="text-sm text-red-500">{errors.first_name.message}</p>
-                    )}
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="last_name">Last Name</Label>
-                    <Input
-                      id="last_name"
-                      {...register('last_name')}
-                      placeholder="Doe"
-                    />
-                    {errors.last_name && (
-                      <p className="text-sm text-red-500">{errors.last_name.message}</p>
-                    )}
-                  </div>
+              <div>
+                <Label htmlFor="confirm_password">Confirm password</Label>
+                <div className="relative">
+                  <Input id="confirm_password" type={showConfirmPassword ? 'text' : 'password'} {...register('confirm_password')} placeholder="••••••••" />
+                  <button type="button" onClick={() => setShowConfirmPassword(!showConfirmPassword)} className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600">
+                    {showConfirmPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                  </button>
                 </div>
+                {errors.confirm_password && <p className="text-sm text-red-600 mt-1">{errors.confirm_password.message}</p>}
+              </div>
 
-                {/* Conditional Fields */}
-                {userType === 'INDIVIDUAL' ? (
-                  <div className="space-y-2">
-                    <Label htmlFor="nickname">Nickname (Optional)</Label>
-                    <Input
-                      id="nickname"
-                      {...register('nickname')}
-                      placeholder="Johnny"
-                    />
-                  </div>
-                ) : (
-                  <div className="space-y-2">
-                    <Label htmlFor="company_name">Company Name (Optional)</Label>
-                    <Input
-                      id="company_name"
-                      {...register('company_name')}
-                      placeholder="Acme Corp"
-                    />
+              <Button type="submit" forceBlue className="w-full" disabled={isLoading}>
+                {isLoading ? 'Creating account...' : (
+                  <div className="flex items-center justify-center">
+                    <span>Create account</span>
+                    <ArrowRight className="ml-2 h-4 w-4" />
                   </div>
                 )}
+              </Button>
 
-                {/* Contact Information */}
-                <div className="space-y-2">
-                  <Label htmlFor="email">Email Address</Label>
-                  <div className="relative">
-                    <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
-                    <Input
-                      id="email"
-                      type="email"
-                      {...register('email')}
-                      className="pl-10"
-                      placeholder="john@example.com"
-                    />
-                  </div>
-                  {errors.email && (
-                    <p className="text-sm text-red-500">{errors.email.message}</p>
-                  )}
-                </div>
+              <p className="text-center text-sm text-muted-foreground mt-2">Already have an account? <Link to="/login" className="text-primary hover:underline">Sign in</Link></p>
+            </form>
+          </CardContent>
+        </Card>
 
-                <div className="space-y-2">
-                  <Label htmlFor="phone">Phone Number</Label>
-                  <div className="relative">
-                    <Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
-                    <Input
-                      id="phone"
-                      {...register('phone')}
-                      className="pl-10"
-                      placeholder="+233 123 456 789"
-                    />
-                  </div>
-                  {errors.phone && (
-                    <p className="text-sm text-red-500">{errors.phone.message}</p>
-                  )}
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="region">Region</Label>
-                  <Select onValueChange={(value) => setValue('region', value)}>
-                    <SelectTrigger>
-                      <div className="flex items-center">
-                        <MapPin className="mr-2 h-4 w-4 text-gray-400" />
-                        <SelectValue placeholder="Select your region" />
-                      </div>
-                    </SelectTrigger>
-                    <SelectContent>
-                      {REGION_CHOICES.map((region) => (
-                        <SelectItem key={region.value} value={region.value}>
-                          {region.label}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  {errors.region && (
-                    <p className="text-sm text-red-500">{errors.region.message}</p>
-                  )}
-                </div>
-
-                {/* Password Fields */}
-                <div className="space-y-2">
-                  <Label htmlFor="password">Password</Label>
-                  <div className="relative">
-                    <Input
-                      id="password"
-                      type={showPassword ? 'text' : 'password'}
-                      {...register('password')}
-                      placeholder="••••••••"
-                    />
-                    <button
-                      type="button"
-                      onClick={() => setShowPassword(!showPassword)}
-                      className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
-                    >
-                      {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                    </button>
-                  </div>
-                  {errors.password && (
-                    <p className="text-sm text-red-500">{errors.password.message}</p>
-                  )}
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="confirm_password">Confirm Password</Label>
-                  <div className="relative">
-                    <Input
-                      id="confirm_password"
-                      type={showConfirmPassword ? 'text' : 'password'}
-                      {...register('confirm_password')}
-                      placeholder="••••••••"
-                    />
-                    <button
-                      type="button"
-                      onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                      className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
-                    >
-                      {showConfirmPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                    </button>
-                  </div>
-                  {errors.confirm_password && (
-                    <p className="text-sm text-red-500">{errors.confirm_password.message}</p>
-                  )}
-                </div>
-
-                {/* Submit Button */}
-                <Button 
-                  type="submit" forceBlue 
-                  className="w-full" 
-                  disabled={isLoading}
-                >
-                  {isLoading ? (
-                    "Creating Account..."
-                  ) : (
-                    <div className="flex items-center justify-center">
-                      <span>Create Account</span>
-                      <ArrowRight className="ml-2 h-4 w-4" />
-                    </div>
-                  )}
-                </Button>
-
-                {/* Login Link */}
-                <div className="text-center">
-                  <p className="text-sm text-gray-600">
-                    Already have an account?{' '}
-                    <Link to="/login" className="text-primary hover:underline">
-                      Sign in
-                    </Link>
-                  </p>
-                </div>
-              </form>
-            </CardContent>
-          </Card>
-        </div>
+        <p className="text-center text-xs text-muted-foreground mt-6">© {new Date().getFullYear()} Prime Pre Logistics. All rights reserved.</p>
       </div>
     </div>
   );
