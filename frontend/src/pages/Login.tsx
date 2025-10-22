@@ -144,7 +144,7 @@ export default function Login() {
           </CardContent>
         </Card>
 
-        <p className="text-center text-xs text-muted-foreground mt-6">© {new Date().getFullYear()} Prime Pre Logistics. All rights reserved.</p>
+        <p className="text-center text-xs text-muted-foreground mt-6">© {new Date().getFullYear()} Cephas Cargo and Logistics. All rights reserved.</p>
       </div>
     </div>
   );

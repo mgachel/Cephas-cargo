@@ -22,7 +22,7 @@ export default function ContactAdminForReset() {
       name: 'Admin Support',
       phone: '+233540820596', // Replace with actual admin contact
       whatsapp: '+233540820596', // Replace with actual WhatsApp
-      email: 'Primepreltd@gmail.com', // Replace with actual email
+      email: 'support@cephascargo.com', // Replace with actual email
     }
   ];
 
@@ -34,7 +34,7 @@ export default function ContactAdminForReset() {
         <div className="relative z-10 flex flex-col justify-center px-12 text-white">
           <div className="flex items-center mb-8">
             <div>
-              <img src="/primepre-logo.png" alt="Prime Pre Logistics Platform" className="mb-8 w-64 h-auto" />
+              <img src="/CCL_LOGO_TP.png" alt="Cephas Cargo and Logistics Platform" className="mb-8 w-64 h-auto" />
             </div>
           </div>
           <h2 className="text-4xl font-bold mb-4">Account Found!</h2>
@@ -79,7 +79,7 @@ export default function ContactAdminForReset() {
       <div className="flex-1 flex items-center justify-center px-6 py-12">
         <div className="w-full max-w-md space-y-8">
           <div className="lg:hidden text-center mb-6">
-            <img src="/primepre-logo-1.png" alt="Prime Pre Logo" className="w-40 h-auto mx-auto mb-4" />
+            <img src="/CCL_LOGO_TP.png" alt="Cephas Cargo and Logistics Logo" className="w-40 h-auto mx-auto mb-4" />
           </div>
           
           <div className="text-center">

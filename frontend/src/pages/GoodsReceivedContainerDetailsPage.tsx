@@ -267,7 +267,7 @@ export default function GoodsReceivedContainerDetailsPage() {
             resolve(false);
           };
           // Use the actual path from public folder
-          img.src = '/primepre-logo-1.png';
+          img.src = '/CCL_LOGO_TP.png';
         });
       };
       
@@ -906,8 +906,8 @@ export default function GoodsReceivedContainerDetailsPage() {
               {/* Logo */}
               <div className="flex justify-center mb-6">
                 <img 
-                  src="/primepre-logo-1.png" 
-                  alt="PrimePre Logo" 
+                  src="/CCL_LOGO_TP.png" 
+                  alt="Cephas Cargo and Logistics Logo" 
                   className="h-20 w-auto object-contain"
                   onError={(e) => {
                     console.error('Logo failed to load in preview');

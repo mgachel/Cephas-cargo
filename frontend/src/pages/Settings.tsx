@@ -642,9 +642,11 @@ export default function Settings() {
         <div className="overflow-x-auto">
           <TabsList className="grid w-full grid-cols-2 lg:grid-cols-5 gap-1">
             <TabsTrigger value="general" className="text-xs lg:text-sm">General</TabsTrigger>
+            {/*
             <TabsTrigger value="invoice" className="text-xs lg:text-sm">Invoice</TabsTrigger>
             <TabsTrigger value="offices" className="text-xs lg:text-sm">Offices</TabsTrigger>
             <TabsTrigger value="warehouses" className="text-xs lg:text-sm">Warehouses</TabsTrigger>
+              */}
             <TabsTrigger value="shipping-marks" className="text-xs lg:text-sm col-span-2 lg:col-span-1">Shipping Marks</TabsTrigger>
           </TabsList>
         </div>

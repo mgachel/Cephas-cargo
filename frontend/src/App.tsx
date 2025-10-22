@@ -12,6 +12,7 @@ import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { useAuthStore } from "@/stores/authStore";
 import Dashboard from "./pages/Dashboard";
 import Login from "./pages/Login";
+import Landing from "./pages/Landing";
 import AdminLogin from "./pages/AdminLogin";
 import Signup from "./pages/Signup";
 import SimplifiedSignup from "./pages/SimplifiedSignup";
@@ -72,6 +73,32 @@ function AuthInitializer({ children }: { children: React.ReactNode }) {
   return <>{children}</>;
 }
 
+// Root renderer: show Landing to public users, show dashboard to authenticated users
+function HomeOrDashboard() {
+  const { isAuthenticated } = useAuthStore();
+
+  if (!isAuthenticated) {
+    return <Landing />;
+  }
+
+  return (
+    <ProtectedRoute>
+      <RoleBasedRoute
+        adminComponent={
+          <AppLayout>
+            <Dashboard />
+          </AppLayout>
+        }
+        customerComponent={
+          <AppLayout>
+            <CustomerDashboard />
+          </AppLayout>
+        }
+      />
+    </ProtectedRoute>
+  );
+}
+
 const App = () => (
   <ErrorBoundary>
     <QueryClientProvider client={queryClient}>
@@ -105,25 +132,7 @@ const App = () => (
             <Route path="/forgot-password" element={<ForgotPassword />} />
             <Route path="/contact-admin-for-reset" element={<ContactAdminForReset />} />
             {/* Dashboard - Role-based */}
-            <Route
-              path="/"
-              element={
-                <ProtectedRoute>
-                  <RoleBasedRoute
-                    adminComponent={
-                      <AppLayout>
-                        <Dashboard />
-                      </AppLayout>
-                    }
-                    customerComponent={
-                      <AppLayout>
-                        <CustomerDashboard />
-                      </AppLayout>
-                    }
-                  />
-                </ProtectedRoute>
-              }
-            />
+            <Route path="/" element={<HomeOrDashboard />} />
 
             {/* Dashboard alias - redirect /dashboard to / */}
             <Route path="/dashboard" element={<Navigate to="/" replace />} />
