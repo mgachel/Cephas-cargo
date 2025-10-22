@@ -118,7 +118,7 @@ export default function AdminLogin() {
 
           <div className="text-center text-xs text-muted-foreground">
             <p>Admin portal — restricted access</p>
-            <p className="mt-1">© 2024 Prime Pre Logistics. All rights reserved.</p>
+            <p className="mt-1"> Powered By WAVEMOVA.</p>
           </div>
         </div>
       </div>
