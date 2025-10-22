@@ -765,20 +765,18 @@ export default function GoodsReceivedContainerDetailsPage() {
                     View
                   </Button>
                   
-                  {/* Download Invoice Button - Only when dollar rate is set */}
-                  {container?.dollar_rate && (
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handlePreviewInvoice(mark, items, totalAmount);
-                      }}
-                      className="h-8 sm:h-9 text-xs sm:text-sm px-2 sm:px-3"
-                    >
-                      Download PDF
-                    </Button>
-                  )}
+                  {/* Download Invoice Button - show always (totalAmount will be 0 if rates not set) */}
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handlePreviewInvoice(mark, items, totalAmount);
+                    }}
+                    className="h-8 sm:h-9 text-xs sm:text-sm px-2 sm:px-3"
+                  >
+                    Download PDF
+                  </Button>
                 </div>
               </div>
 
