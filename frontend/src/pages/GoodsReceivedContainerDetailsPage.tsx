@@ -215,7 +215,7 @@ export default function GoodsReceivedContainerDetailsPage() {
     const today = new Date();
     const dateStr = `${today.getFullYear()}${String(today.getMonth() + 1).padStart(2, '0')}${String(today.getDate()).padStart(2, '0')}`;
     const randomNum = Math.floor(Math.random() * 10000).toString().padStart(4, '0');
-    const invoiceNumber = `PM${dateStr}${randomNum}`;
+    const invoiceNumber = `DC${dateStr}${randomNum}`;
     
     // Set preview data and show dialog
     setPreviewInvoiceData({ shippingMark, items, totalAmount, invoiceNumber });
@@ -319,7 +319,7 @@ export default function GoodsReceivedContainerDetailsPage() {
     pdf.setFont('helvetica', 'bold');
     pdf.text('LOCATION:', 14, yPos);
     pdf.setFont('helvetica', 'normal'); 
-    pdf.text('Cephas Cargo (on Google Maps)', 50, yPos);
+    pdf.text('Frafraha', 50, yPos);
 
 
     // Invoice details - Right side
