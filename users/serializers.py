@@ -71,14 +71,17 @@ class AdminUserCreateSerializer(serializers.ModelSerializer):
         # Validate role permissions
         requesting_user = self.context['request'].user
         requested_role = data.get('user_role', 'CUSTOMER')
-        
-        if not requesting_user.can_create_admin_user():
+        # Allow admins to create CUSTOMER users without requiring full admin-create permission.
+        # Only enforce can_create_admin_user() when creating admin/staff roles (ADMIN, MANAGER, SUPER_ADMIN, STAFF).
+        admin_roles = ['ADMIN', 'MANAGER', 'SUPER_ADMIN', 'STAFF']
+        if requested_role in admin_roles and not requesting_user.can_create_admin_user():
             raise serializers.ValidationError("You don't have permission to create admin users.")
-        
-        # Super admins can create anyone, managers can create admins and below
+
+        # Super admins can create anyone. Managers cannot create Super Admins.
         if requesting_user.user_role == 'MANAGER' and requested_role == 'SUPER_ADMIN':
             raise serializers.ValidationError("Managers cannot create Super Admins.")
-        
+
+        # Admins cannot create Managers or Super Admins unless they have explicit permission
         if requesting_user.user_role == 'ADMIN' and requested_role in ['SUPER_ADMIN', 'MANAGER']:
             raise serializers.ValidationError("Admins cannot create Managers or Super Admins.")
         
