@@ -14,7 +14,6 @@ import { Loader2 } from "lucide-react";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import { clientService, CreateClientRequest } from "@/services/clientService";
-import { adminService } from "@/services/adminService";
 import { useAuthStore } from "@/stores/authStore";
 
 interface NewClientDialogProps {
@@ -97,15 +96,11 @@ export function NewClientDialog({ open, onOpenChange, onCreated }: NewClientDial
         is_verified: formData.is_verified,
       };
 
-      // Choose service depending on whether current user is an admin
-      const currentUser = useAuthStore.getState().user;
-      let res;
-      if (currentUser?.is_admin_user) {
-        // Admins use the admin create endpoint
-        res = await adminService.createAdminUser(extendedPayload as any);
-      } else {
-        res = await clientService.createClient(extendedPayload as any);
-      }
+      // Use the client registration endpoint to create customers.
+      // adminService.createAdminUser expects admin-specific fields (accessible_warehouses, etc.)
+      // which are not present for CUSTOMER creation and can cause the request to fail.
+      // Always call clientService.createClient which posts to /api/auth/register/.
+      const res = await clientService.createClient(extendedPayload as any);
 
       toast({ title: "Client Created", description: `New client ${payload.first_name} ${payload.last_name} has been added successfully.` });
 
