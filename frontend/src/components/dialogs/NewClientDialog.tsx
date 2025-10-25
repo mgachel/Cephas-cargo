@@ -88,6 +88,15 @@ export function NewClientDialog({ open, onOpenChange, onCreated }: NewClientDial
         return;
       }
 
+      // If admin and password fields were hidden, fall back to a secure default password
+      const defaultAdminPassword = "CephasCargo1!";
+      const passwordToSend = (formData.password && formData.password.length > 0)
+        ? formData.password
+        : (currentUser?.is_admin_user ? defaultAdminPassword : formData.password);
+      const confirmToSend = (formData.confirm_password && formData.confirm_password.length > 0)
+        ? formData.confirm_password
+        : (currentUser?.is_admin_user ? defaultAdminPassword : formData.confirm_password);
+
       // Prepare payload for API
       // Ensure required registration fields are present even for the simplified admin form
       const payload: CreateClientRequest = {
@@ -99,8 +108,8 @@ export function NewClientDialog({ open, onOpenChange, onCreated }: NewClientDial
         // Register endpoint requires region and user_type; provide sensible defaults if empty
         region: formData.region || "GREATER_ACCRA",
         user_type: (formData.user_type as 'INDIVIDUAL' | 'BUSINESS') || 'INDIVIDUAL',
-        password: formData.password,
-        confirm_password: formData.confirm_password,
+        password: passwordToSend,
+        confirm_password: confirmToSend,
       };
 
       // We will set admin-only fields (shipping_mark, user_role, is_verified, is_active)
