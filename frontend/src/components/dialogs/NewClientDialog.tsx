@@ -27,6 +27,7 @@ interface NewClientDialogProps {
 export function NewClientDialog({ open, onOpenChange, onCreated }: NewClientDialogProps) {
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
+  const { user: currentUser } = useAuthStore();
   const [formData, setFormData] = useState<{
     first_name: string;
     last_name: string;
@@ -56,9 +57,10 @@ export function NewClientDialog({ open, onOpenChange, onCreated }: NewClientDial
       user_type: 'INDIVIDUAL',
       user_role: 'CUSTOMER',
       is_active: true,
-      is_verified: false,
-      password: "",
-      confirm_password: "",
+  // If the current user is an admin, default to verified and a known default password
+  is_verified: currentUser?.is_admin_user ? true : false,
+  password: currentUser?.is_admin_user ? "CephasCargo1" : "",
+  confirm_password: currentUser?.is_admin_user ? "CephasCargo1" : "",
       notes: "",
     }
   );
@@ -170,9 +172,9 @@ export function NewClientDialog({ open, onOpenChange, onCreated }: NewClientDial
         </DialogHeader>
 
         <form onSubmit={handleSubmit} className="space-y-6">
-          <div className="space-y-4">
-            <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">Personal Information</h3>
-            <div className="grid grid-cols-3 gap-4">
+          {currentUser?.is_admin_user ? (
+            // Simplified form for admins: only the fields requested
+            <div className="space-y-4">
               <div>
                 <Label htmlFor="first_name">First Name <span className="text-destructive">*</span></Label>
                 <Input id="first_name" value={formData.first_name} onChange={(e) => setFormData({...formData, first_name: e.target.value})} required />
@@ -182,129 +184,162 @@ export function NewClientDialog({ open, onOpenChange, onCreated }: NewClientDial
                 <Input id="last_name" value={formData.last_name} onChange={(e) => setFormData({...formData, last_name: e.target.value})} required />
               </div>
               <div>
-                <Label htmlFor="nickname">Nickname</Label>
-                <Input id="nickname" value={formData.nickname} onChange={(e) => setFormData({...formData, nickname: e.target.value})} placeholder="Optional display name" />
-              </div>
-            </div>
-          </div>
-
-          <div className="space-y-4">
-            <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">Contact Information</h3>
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <Label htmlFor="phone">Phone <span className="text-destructive">*</span></Label>
-                <Input id="phone" value={formData.phone} onChange={(e) => setFormData({...formData, phone: e.target.value})} placeholder="+233 XX XXX XXXX" required />
+                <Label htmlFor="shipping_mark">Shipping Mark <span className="text-destructive">*</span></Label>
+                {/* Preserve exact input (no automatic uppercase) so datatable shows what admin entered */}
+                <Input id="shipping_mark" value={formData.shipping_mark} onChange={(e) => setFormData({...formData, shipping_mark: e.target.value})} required className="font-mono" placeholder="UNIQUE-MARK" />
               </div>
               <div>
                 <Label htmlFor="email">Email</Label>
                 <Input id="email" type="email" value={formData.email} onChange={(e) => setFormData({...formData, email: e.target.value})} placeholder="client@example.com" />
               </div>
-            </div>
-            <div>
-              <Label htmlFor="region">Region <span className="text-destructive">*</span></Label>
-              <Select value={formData.region} onValueChange={(value) => setFormData({...formData, region: value})}>
-                <SelectTrigger id="region"><SelectValue placeholder="Select region"/></SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="GREATER_ACCRA">Greater Accra</SelectItem>
-                  <SelectItem value="ASHANTI">Ashanti</SelectItem>
-                  <SelectItem value="WESTERN">Western</SelectItem>
-                  <SelectItem value="EASTERN">Eastern</SelectItem>
-                  <SelectItem value="CENTRAL">Central</SelectItem>
-                  <SelectItem value="NORTHERN">Northern</SelectItem>
-                  <SelectItem value="UPPER_EAST">Upper East</SelectItem>
-                  <SelectItem value="UPPER_WEST">Upper West</SelectItem>
-                  <SelectItem value="VOLTA">Volta</SelectItem>
-                  <SelectItem value="BONO">Bono</SelectItem>
-                  <SelectItem value="BONO_EAST">Bono East</SelectItem>
-                  <SelectItem value="AHAFO">Ahafo</SelectItem>
-                  <SelectItem value="BRONG_AHAFO">Brong Ahafo</SelectItem>
-                  <SelectItem value="SAVANNAH">Savannah</SelectItem>
-                  <SelectItem value="NORTH_EAST">North East</SelectItem>
-                  <SelectItem value="OTI">Oti</SelectItem>
-                  <SelectItem value="WESTERN_NORTH">Western North</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
-
-          <div className="space-y-4">
-            <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">Business Information</h3>
-            <div className="grid grid-cols-2 gap-4">
               <div>
-                <Label htmlFor="company_name">Company Name</Label>
-                <Input id="company_name" value={formData.company_name} onChange={(e) => setFormData({...formData, company_name: e.target.value})} placeholder="Optional" />
+                <Label htmlFor="phone">Phone <span className="text-destructive">*</span></Label>
+                <Input id="phone" value={formData.phone} onChange={(e) => setFormData({...formData, phone: e.target.value})} placeholder="+233 XX XXX XXXX" required />
               </div>
-              <div>
-                <Label htmlFor="shipping_mark">Shipping Mark <span className="text-destructive">*</span></Label>
-                <Input id="shipping_mark" value={formData.shipping_mark} onChange={(e) => setFormData({...formData, shipping_mark: e.target.value})} required className="font-mono uppercase" placeholder="UNIQUE-MARK" />
+              <div className="text-xs text-muted-foreground">
+                Password will be set to <strong>CephasCargo1</strong> and the account will be marked as verified automatically.
               </div>
             </div>
-            <div>
-              <Label htmlFor="user_type">User Type <span className="text-destructive">*</span></Label>
-              <Select value={formData.user_type} onValueChange={(value) => setFormData({...formData, user_type: value as 'INDIVIDUAL' | 'BUSINESS'})}>
-                <SelectTrigger id="user_type"><SelectValue placeholder="Select user type"/></SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="INDIVIDUAL">Individual</SelectItem>
-                  <SelectItem value="BUSINESS">Business</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
-
-          <div className="space-y-4">
-            <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">Account Settings</h3>
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <Label htmlFor="user_role">User Role <span className="text-destructive">*</span></Label>
-                <Select value={formData.user_role} onValueChange={(value) => setFormData({...formData, user_role: value})}>
-                  <SelectTrigger id="user_role"><SelectValue placeholder="Select role"/></SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="CUSTOMER">Customer</SelectItem>
-                    <SelectItem value="STAFF">Staff</SelectItem>
-                    <SelectItem value="ADMIN">Admin</SelectItem>
-                    <SelectItem value="MANAGER">Manager</SelectItem>
-                    <SelectItem value="SUPER_ADMIN">Super Admin</SelectItem>
-                  </SelectContent>
-                </Select>
+          ) : (
+            // Full form for non-admin users (existing behavior)
+            <>
+              <div className="space-y-4">
+                <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">Personal Information</h3>
+                <div className="grid grid-cols-3 gap-4">
+                  <div>
+                    <Label htmlFor="first_name">First Name <span className="text-destructive">*</span></Label>
+                    <Input id="first_name" value={formData.first_name} onChange={(e) => setFormData({...formData, first_name: e.target.value})} required />
+                  </div>
+                  <div>
+                    <Label htmlFor="last_name">Last Name <span className="text-destructive">*</span></Label>
+                    <Input id="last_name" value={formData.last_name} onChange={(e) => setFormData({...formData, last_name: e.target.value})} required />
+                  </div>
+                  <div>
+                    <Label htmlFor="nickname">Nickname</Label>
+                    <Input id="nickname" value={formData.nickname} onChange={(e) => setFormData({...formData, nickname: e.target.value})} placeholder="Optional display name" />
+                  </div>
+                </div>
               </div>
-              <div>
-                <Label htmlFor="is_active">Account Status</Label>
-                <Select value={formData.is_active ? 'active' : 'inactive'} onValueChange={(value) => setFormData({...formData, is_active: value === 'active'})}>
-                  <SelectTrigger id="is_active"><SelectValue/></SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="active">Active</SelectItem>
-                    <SelectItem value="inactive">Inactive</SelectItem>
-                  </SelectContent>
-                </Select>
+
+              <div className="space-y-4">
+                <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">Contact Information</h3>
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <Label htmlFor="phone">Phone <span className="text-destructive">*</span></Label>
+                    <Input id="phone" value={formData.phone} onChange={(e) => setFormData({...formData, phone: e.target.value})} placeholder="+233 XX XXX XXXX" required />
+                  </div>
+                  <div>
+                    <Label htmlFor="email">Email</Label>
+                    <Input id="email" type="email" value={formData.email} onChange={(e) => setFormData({...formData, email: e.target.value})} placeholder="client@example.com" />
+                  </div>
+                </div>
+                <div>
+                  <Label htmlFor="region">Region <span className="text-destructive">*</span></Label>
+                  <Select value={formData.region} onValueChange={(value) => setFormData({...formData, region: value})}>
+                    <SelectTrigger id="region"><SelectValue placeholder="Select region"/></SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="GREATER_ACCRA">Greater Accra</SelectItem>
+                      <SelectItem value="ASHANTI">Ashanti</SelectItem>
+                      <SelectItem value="WESTERN">Western</SelectItem>
+                      <SelectItem value="EASTERN">Eastern</SelectItem>
+                      <SelectItem value="CENTRAL">Central</SelectItem>
+                      <SelectItem value="NORTHERN">Northern</SelectItem>
+                      <SelectItem value="UPPER_EAST">Upper East</SelectItem>
+                      <SelectItem value="UPPER_WEST">Upper West</SelectItem>
+                      <SelectItem value="VOLTA">Volta</SelectItem>
+                      <SelectItem value="BONO">Bono</SelectItem>
+                      <SelectItem value="BONO_EAST">Bono East</SelectItem>
+                      <SelectItem value="AHAFO">Ahafo</SelectItem>
+                      <SelectItem value="BRONG_AHAFO">Brong Ahafo</SelectItem>
+                      <SelectItem value="SAVANNAH">Savannah</SelectItem>
+                      <SelectItem value="NORTH_EAST">North East</SelectItem>
+                      <SelectItem value="OTI">Oti</SelectItem>
+                      <SelectItem value="WESTERN_NORTH">Western North</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
               </div>
-            </div>
-            <div>
-              <Label htmlFor="is_verified">Verification Status</Label>
-              <Select value={formData.is_verified ? 'verified' : 'unverified'} onValueChange={(value) => setFormData({...formData, is_verified: value === 'verified'})}>
-                <SelectTrigger id="is_verified"><SelectValue/></SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="verified">Verified</SelectItem>
-                  <SelectItem value="unverified">Unverified</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <Label htmlFor="password">Password <span className="text-destructive">*</span></Label>
-              <Input id="password" type="password" value={formData.password} onChange={(e) => setFormData({...formData, password: e.target.value})} required />
-            </div>
-            <div>
-              <Label htmlFor="confirm_password">Confirm Password <span className="text-destructive">*</span></Label>
-              <Input id="confirm_password" type="password" value={formData.confirm_password} onChange={(e) => setFormData({...formData, confirm_password: e.target.value})} required />
-            </div>
-          </div>
+              <div className="space-y-4">
+                <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">Business Information</h3>
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <Label htmlFor="company_name">Company Name</Label>
+                    <Input id="company_name" value={formData.company_name} onChange={(e) => setFormData({...formData, company_name: e.target.value})} placeholder="Optional" />
+                  </div>
+                  <div>
+                    <Label htmlFor="shipping_mark">Shipping Mark <span className="text-destructive">*</span></Label>
+                    <Input id="shipping_mark" value={formData.shipping_mark} onChange={(e) => setFormData({...formData, shipping_mark: e.target.value})} required className="font-mono" placeholder="UNIQUE-MARK" />
+                  </div>
+                </div>
+                <div>
+                  <Label htmlFor="user_type">User Type <span className="text-destructive">*</span></Label>
+                  <Select value={formData.user_type} onValueChange={(value) => setFormData({...formData, user_type: value as 'INDIVIDUAL' | 'BUSINESS'})}>
+                    <SelectTrigger id="user_type"><SelectValue placeholder="Select user type"/></SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="INDIVIDUAL">Individual</SelectItem>
+                      <SelectItem value="BUSINESS">Business</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="notes">Notes</Label>
-            <Textarea id="notes" value={formData.notes} onChange={(e) => setFormData({...formData, notes: e.target.value || ''})} rows={3} />
-          </div>
+              <div className="space-y-4">
+                <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">Account Settings</h3>
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <Label htmlFor="user_role">User Role <span className="text-destructive">*</span></Label>
+                    <Select value={formData.user_role} onValueChange={(value) => setFormData({...formData, user_role: value})}>
+                      <SelectTrigger id="user_role"><SelectValue placeholder="Select role"/></SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="CUSTOMER">Customer</SelectItem>
+                        <SelectItem value="STAFF">Staff</SelectItem>
+                        <SelectItem value="ADMIN">Admin</SelectItem>
+                        <SelectItem value="MANAGER">Manager</SelectItem>
+                        <SelectItem value="SUPER_ADMIN">Super Admin</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div>
+                    <Label htmlFor="is_active">Account Status</Label>
+                    <Select value={formData.is_active ? 'active' : 'inactive'} onValueChange={(value) => setFormData({...formData, is_active: value === 'active'})}>
+                      <SelectTrigger id="is_active"><SelectValue/></SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="active">Active</SelectItem>
+                        <SelectItem value="inactive">Inactive</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+                <div>
+                  <Label htmlFor="is_verified">Verification Status</Label>
+                  <Select value={formData.is_verified ? 'verified' : 'unverified'} onValueChange={(value) => setFormData({...formData, is_verified: value === 'verified'})}>
+                    <SelectTrigger id="is_verified"><SelectValue/></SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="verified">Verified</SelectItem>
+                      <SelectItem value="unverified">Unverified</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <Label htmlFor="password">Password <span className="text-destructive">*</span></Label>
+                  <Input id="password" type="password" value={formData.password} onChange={(e) => setFormData({...formData, password: e.target.value})} required />
+                </div>
+                <div>
+                  <Label htmlFor="confirm_password">Confirm Password <span className="text-destructive">*</span></Label>
+                  <Input id="confirm_password" type="password" value={formData.confirm_password} onChange={(e) => setFormData({...formData, confirm_password: e.target.value})} required />
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="notes">Notes</Label>
+                <Textarea id="notes" value={formData.notes} onChange={(e) => setFormData({...formData, notes: e.target.value || ''})} rows={3} />
+              </div>
+            </>
+          )}
 
           <DialogFooter>
             <Button type="button" variant="outline" onClick={() => onOpenChange(false)} disabled={loading}>
