@@ -123,7 +123,7 @@ export function NewClientDialog({ open, onOpenChange, onCreated }: NewClientDial
         toast({ title: 'Partial Success', description: 'Client created but failed to set shipping mark automatically.', variant: 'warning' });
       }
 
-      toast({ title: "Client Created", description: `New client ${payload.first_name} ${payload.last_name} has been added successfully.` });
+  toast({ title: "Client Created", description: `New client ${payload.first_name} ${payload.last_name} has been added successfully.` });
 
       // Reset form
       setFormData({
@@ -146,30 +146,39 @@ export function NewClientDialog({ open, onOpenChange, onCreated }: NewClientDial
 
       onOpenChange(false);
 
-      if ((res as unknown as { data?: unknown })?.data && typeof onCreated === 'function') {
-        onCreated((res as unknown as { data: unknown }).data);
+      // Always call onCreated so parent refreshes its list even if the response shape is unexpected
+      try {
+        if (typeof onCreated === 'function') onCreated((res as any)?.data || null);
+      } catch (e) {
+        console.warn('onCreated callback failed', e);
       }
     } catch (error: unknown) {
+      // Log full error to console for debugging
       console.error('CreateClient failed', error);
 
-      // Extract detailed error message similar to EditClientDialog
+      // Try to extract response body if available
       let errorMessage = 'Failed to create client';
-      if ((error as any)?.response?.data) {
-        const errorData = (error as any).response.data;
-        if (typeof errorData === 'object' && !errorData.message) {
-          const fieldErrors = Object.entries(errorData)
-            .map(([field, errors]) => {
-              const errorArray = Array.isArray(errors) ? errors : [errors];
-              return `${field}: ${errorArray.join(', ')}`;
-            })
-            .join('; ');
-          errorMessage = fieldErrors || errorMessage;
-        } else {
-          errorMessage = errorData.message || errorData.error || errorData.detail || errorMessage;
+      const respData = (error as any)?.response?.data;
+      if (respData) {
+        try {
+          if (typeof respData === 'object') {
+            // Build readable field: errors
+            const fieldErrors = Object.entries(respData)
+              .map(([k, v]) => `${k}: ${Array.isArray(v) ? v.join(', ') : v}`)
+              .join('; ');
+            errorMessage = fieldErrors || JSON.stringify(respData);
+          } else {
+            errorMessage = String(respData);
+          }
+        } catch (e) {
+          errorMessage = JSON.stringify(respData);
         }
-      } else if ((error as any).message) {
+      } else if ((error as any)?.message) {
         errorMessage = (error as any).message;
       }
+
+      // Also show raw response in console to help debugging
+      if ((error as any)?.response) console.debug('Register response', (error as any).response);
 
       toast({ title: 'Create Failed', description: errorMessage, variant: 'destructive' });
     } finally {
