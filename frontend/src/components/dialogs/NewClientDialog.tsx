@@ -14,6 +14,7 @@ import { Loader2 } from "lucide-react";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import { clientService, CreateClientRequest } from "@/services/clientService";
+import { adminService } from "@/services/adminService";
 import { useAuthStore } from "@/stores/authStore";
 
 interface NewClientDialogProps {
@@ -75,14 +76,16 @@ export function NewClientDialog({ open, onOpenChange, onCreated }: NewClientDial
   setLoading(true);
   try {
       // Prepare payload for API
+      // Ensure required registration fields are present even for the simplified admin form
       const payload: CreateClientRequest = {
         first_name: formData.first_name,
         last_name: formData.last_name,
         company_name: formData.company_name,
         email: formData.email,
         phone: formData.phone,
-        region: formData.region,
-        user_type: formData.user_type,
+        // Register endpoint requires region and user_type; provide sensible defaults if empty
+        region: formData.region || "GREATER_ACCRA",
+        user_type: (formData.user_type as 'INDIVIDUAL' | 'BUSINESS') || 'INDIVIDUAL',
         password: formData.password,
         confirm_password: formData.confirm_password,
       };
@@ -101,6 +104,24 @@ export function NewClientDialog({ open, onOpenChange, onCreated }: NewClientDial
       // which are not present for CUSTOMER creation and can cause the request to fail.
       // Always call clientService.createClient which posts to /api/auth/register/.
       const res = await clientService.createClient(extendedPayload as any);
+
+      // If admin provided a shipping_mark (and the register endpoint doesn't accept it),
+      // update the created user via the admin PATCH endpoint so the shipping_mark is stored
+      // and the user is marked verified immediately.
+      try {
+        const createdUser = (res as any)?.data?.user || (res as any)?.data;
+        const createdId = createdUser?.id;
+        if (createdId && formData.shipping_mark) {
+          await adminService.updateClient(createdId, {
+            shipping_mark: formData.shipping_mark,
+            is_verified: true,
+          } as any);
+        }
+      } catch (updateErr) {
+        // Non-fatal: show a toast but don't fail the whole flow
+        console.warn('Failed to set shipping_mark via admin update', updateErr);
+        toast({ title: 'Partial Success', description: 'Client created but failed to set shipping mark automatically.', variant: 'warning' });
+      }
 
       toast({ title: "Client Created", description: `New client ${payload.first_name} ${payload.last_name} has been added successfully.` });
 
