@@ -79,7 +79,8 @@ export function NewClientDialog({ open, onOpenChange, onCreated }: NewClientDial
       // Basic client-side normalization & validation
       const firstName = (formData.first_name || "").trim();
       const lastName = (formData.last_name || "").trim();
-      const shippingMark = (formData.shipping_mark || "").trim();
+  // Preserve the exact shipping mark the admin typed. Do not alter casing or internal spacing.
+  const shippingMarkRaw = formData.shipping_mark || "";
       const phoneRaw = (formData.phone || "").trim();
       const phoneDigits = phoneRaw.replace(/[^0-9]/g, "");
       if (phoneDigits.length < 10) {
@@ -131,7 +132,8 @@ export function NewClientDialog({ open, onOpenChange, onCreated }: NewClientDial
           email: payload.email,
           phone: payload.phone,
           region: payload.region,
-          shipping_mark: shippingMark,
+          // Send the raw value so the backend stores exactly what the admin entered
+          shipping_mark: shippingMarkRaw,
           user_role: 'CUSTOMER',
           user_type: payload.user_type || 'INDIVIDUAL',
           accessible_warehouses: [],
@@ -157,7 +159,8 @@ export function NewClientDialog({ open, onOpenChange, onCreated }: NewClientDial
         const createdId = createdUser?.id;
         if (createdId && formData.shipping_mark) {
           await adminService.updateClient(createdId, {
-            shipping_mark: formData.shipping_mark,
+            // Use the raw shipping mark for the update as well
+            shipping_mark: shippingMarkRaw,
             is_verified: true,
             user_role: formData.user_role,
             is_active: formData.is_active,
