@@ -347,18 +347,6 @@ export default function AirCargo() {
               <Plus className="h-3.5 w-3.5 sm:h-4 sm:w-4 mr-2" style={{ color: "#FFFFFF" }} />
               Add Air Container
             </Button>
-            <ExcelUploadButton
-              uploadType="sea_cargo"
-              variant="outline"
-              className="h-9 sm:h-10 text-xs sm:text-sm"
-              onUploadComplete={(response) => {
-                toast({
-                  title: "Excel upload completed",
-                  description: `Processed ${response.summary.created || 0} air cargo items`,
-                });
-                window.location.reload();
-              }}
-            />
           </div>
         )}
       </div>

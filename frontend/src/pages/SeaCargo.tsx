@@ -395,20 +395,6 @@ export default function SeaCargo() {
             >
               <Plus className="h-3.5 w-3.5 sm:h-4 sm:w-4 mr-2" style={{ color: "#FFFFFF" }} /> Add Cargo
             </Button>
-            <ExcelUploadButton
-              uploadType="sea_cargo"
-              variant="outline"
-              className="h-9 sm:h-10 text-xs sm:text-sm"
-              onUploadComplete={(response) => {
-                toast({
-                  title: "Excel upload completed",
-                  description: `Successfully processed ${response.summary.created || 0} sea cargo items`,
-                });
-                // Refresh the data
-                window.location.reload();
-              }}
-              style={{ borderColor: primaryColor, color: primaryColor }}
-            />
           </div>
         )}
       </div>
