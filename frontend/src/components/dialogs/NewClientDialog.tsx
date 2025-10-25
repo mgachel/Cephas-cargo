@@ -59,8 +59,9 @@ export function NewClientDialog({ open, onOpenChange, onCreated }: NewClientDial
       is_active: true,
   // If the current user is an admin, default to verified and a known default password
   is_verified: currentUser?.is_admin_user ? true : false,
-  password: currentUser?.is_admin_user ? "CephasCargo1" : "",
-  confirm_password: currentUser?.is_admin_user ? "CephasCargo1" : "",
+  // Use a default password that meets backend validators (uppercase, number, special char, min length)
+  password: currentUser?.is_admin_user ? "CephasCargo1!" : "",
+  confirm_password: currentUser?.is_admin_user ? "CephasCargo1!" : "",
       notes: "",
     }
   );
@@ -75,14 +76,26 @@ export function NewClientDialog({ open, onOpenChange, onCreated }: NewClientDial
 
   setLoading(true);
   try {
+      // Basic client-side normalization & validation
+      const firstName = (formData.first_name || "").trim();
+      const lastName = (formData.last_name || "").trim();
+      const shippingMark = (formData.shipping_mark || "").trim();
+      const phoneRaw = (formData.phone || "").trim();
+      const phoneDigits = phoneRaw.replace(/[^0-9]/g, "");
+      if (phoneDigits.length < 10) {
+        toast({ title: 'Invalid phone', description: 'Please enter a valid phone number with at least 10 digits', variant: 'destructive' });
+        setLoading(false);
+        return;
+      }
+
       // Prepare payload for API
       // Ensure required registration fields are present even for the simplified admin form
       const payload: CreateClientRequest = {
-        first_name: formData.first_name,
-        last_name: formData.last_name,
+  first_name: firstName,
+  last_name: lastName,
         company_name: formData.company_name,
         email: formData.email,
-        phone: formData.phone,
+  phone: phoneRaw,
         // Register endpoint requires region and user_type; provide sensible defaults if empty
         region: formData.region || "GREATER_ACCRA",
         user_type: (formData.user_type as 'INDIVIDUAL' | 'BUSINESS') || 'INDIVIDUAL',
@@ -90,20 +103,42 @@ export function NewClientDialog({ open, onOpenChange, onCreated }: NewClientDial
         confirm_password: formData.confirm_password,
       };
 
-      // include additional fields (shipping_mark, user_role, is_active, is_verified)
-      const extendedPayload = {
-        ...payload,
-        shipping_mark: formData.shipping_mark,
-        user_role: formData.user_role,
-        is_active: formData.is_active,
-        is_verified: formData.is_verified,
-      };
+      // We will set admin-only fields (shipping_mark, user_role, is_verified, is_active)
+      // in a follow-up PATCH after successful registration.
 
-      // Use the client registration endpoint to create customers.
-      // adminService.createAdminUser expects admin-specific fields (accessible_warehouses, etc.)
-      // which are not present for CUSTOMER creation and can cause the request to fail.
-      // Always call clientService.createClient which posts to /api/auth/register/.
-      const res = await clientService.createClient(extendedPayload as any);
+  // Use the client registration endpoint to create customers.
+  // Send only the fields accepted by RegisterSerializer to avoid validation errors
+  // caused by unexpected fields. We'll set admin-only fields with a follow-up PATCH.
+      console.debug('Register payload', payload);
+
+      let res;
+      // If the current user is admin, use admin create endpoint which can create customers
+      // and will auto-verify them. Provide admin serializer fields with sensible defaults.
+      if (currentUser?.is_admin_user) {
+        const adminPayload = {
+          first_name: payload.first_name,
+          last_name: payload.last_name,
+          company_name: payload.company_name,
+          email: payload.email,
+          phone: payload.phone,
+          region: payload.region,
+          shipping_mark: shippingMark,
+          user_role: 'CUSTOMER',
+          user_type: payload.user_type || 'INDIVIDUAL',
+          accessible_warehouses: [],
+          can_create_users: false,
+          can_manage_inventory: false,
+          can_view_analytics: false,
+          can_manage_admins: false,
+          password: payload.password,
+          confirm_password: payload.confirm_password,
+        };
+
+        console.debug('Admin create payload', adminPayload);
+        res = await adminService.createAdminUser(adminPayload as any);
+      } else {
+        res = await clientService.createClient(payload as any);
+      }
 
       // If admin provided a shipping_mark (and the register endpoint doesn't accept it),
       // update the created user via the admin PATCH endpoint so the shipping_mark is stored
@@ -115,6 +150,8 @@ export function NewClientDialog({ open, onOpenChange, onCreated }: NewClientDial
           await adminService.updateClient(createdId, {
             shipping_mark: formData.shipping_mark,
             is_verified: true,
+            user_role: formData.user_role,
+            is_active: formData.is_active,
           } as any);
         }
       } catch (updateErr) {
@@ -197,174 +234,33 @@ export function NewClientDialog({ open, onOpenChange, onCreated }: NewClientDial
         </DialogHeader>
 
         <form onSubmit={handleSubmit} className="space-y-6">
-          {currentUser?.is_admin_user ? (
-            // Simplified form for admins: only the fields requested
-            <div className="space-y-4">
-              <div>
-                <Label htmlFor="first_name">First Name <span className="text-destructive">*</span></Label>
-                <Input id="first_name" value={formData.first_name} onChange={(e) => setFormData({...formData, first_name: e.target.value})} required />
-              </div>
-              <div>
-                <Label htmlFor="last_name">Last Name <span className="text-destructive">*</span></Label>
-                <Input id="last_name" value={formData.last_name} onChange={(e) => setFormData({...formData, last_name: e.target.value})} required />
-              </div>
-              <div>
-                <Label htmlFor="shipping_mark">Shipping Mark <span className="text-destructive">*</span></Label>
-                {/* Preserve exact input (no automatic uppercase) so datatable shows what admin entered */}
-                <Input id="shipping_mark" value={formData.shipping_mark} onChange={(e) => setFormData({...formData, shipping_mark: e.target.value})} required className="font-mono" placeholder="UNIQUE-MARK" />
-              </div>
-              <div>
-                <Label htmlFor="email">Email</Label>
-                <Input id="email" type="email" value={formData.email} onChange={(e) => setFormData({...formData, email: e.target.value})} placeholder="client@example.com" />
-              </div>
-              <div>
-                <Label htmlFor="phone">Phone <span className="text-destructive">*</span></Label>
-                <Input id="phone" value={formData.phone} onChange={(e) => setFormData({...formData, phone: e.target.value})} placeholder="+233 XX XXX XXXX" required />
-              </div>
-              <div className="text-xs text-muted-foreground">
-                Password will be set to <strong>CephasCargo1</strong> and the account will be marked as verified automatically.
-              </div>
+          {/* Simplified form (admin-only UI): show only the requested fields */}
+          <div className="space-y-4">
+            <div>
+              <Label htmlFor="first_name">First Name <span className="text-destructive">*</span></Label>
+              <Input id="first_name" value={formData.first_name} onChange={(e) => setFormData({...formData, first_name: e.target.value})} required />
             </div>
-          ) : (
-            // Full form for non-admin users (existing behavior)
-            <>
-              <div className="space-y-4">
-                <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">Personal Information</h3>
-                <div className="grid grid-cols-3 gap-4">
-                  <div>
-                    <Label htmlFor="first_name">First Name <span className="text-destructive">*</span></Label>
-                    <Input id="first_name" value={formData.first_name} onChange={(e) => setFormData({...formData, first_name: e.target.value})} required />
-                  </div>
-                  <div>
-                    <Label htmlFor="last_name">Last Name <span className="text-destructive">*</span></Label>
-                    <Input id="last_name" value={formData.last_name} onChange={(e) => setFormData({...formData, last_name: e.target.value})} required />
-                  </div>
-                  <div>
-                    <Label htmlFor="nickname">Nickname</Label>
-                    <Input id="nickname" value={formData.nickname} onChange={(e) => setFormData({...formData, nickname: e.target.value})} placeholder="Optional display name" />
-                  </div>
-                </div>
-              </div>
-
-              <div className="space-y-4">
-                <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">Contact Information</h3>
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <Label htmlFor="phone">Phone <span className="text-destructive">*</span></Label>
-                    <Input id="phone" value={formData.phone} onChange={(e) => setFormData({...formData, phone: e.target.value})} placeholder="+233 XX XXX XXXX" required />
-                  </div>
-                  <div>
-                    <Label htmlFor="email">Email</Label>
-                    <Input id="email" type="email" value={formData.email} onChange={(e) => setFormData({...formData, email: e.target.value})} placeholder="client@example.com" />
-                  </div>
-                </div>
-                <div>
-                  <Label htmlFor="region">Region <span className="text-destructive">*</span></Label>
-                  <Select value={formData.region} onValueChange={(value) => setFormData({...formData, region: value})}>
-                    <SelectTrigger id="region"><SelectValue placeholder="Select region"/></SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="GREATER_ACCRA">Greater Accra</SelectItem>
-                      <SelectItem value="ASHANTI">Ashanti</SelectItem>
-                      <SelectItem value="WESTERN">Western</SelectItem>
-                      <SelectItem value="EASTERN">Eastern</SelectItem>
-                      <SelectItem value="CENTRAL">Central</SelectItem>
-                      <SelectItem value="NORTHERN">Northern</SelectItem>
-                      <SelectItem value="UPPER_EAST">Upper East</SelectItem>
-                      <SelectItem value="UPPER_WEST">Upper West</SelectItem>
-                      <SelectItem value="VOLTA">Volta</SelectItem>
-                      <SelectItem value="BONO">Bono</SelectItem>
-                      <SelectItem value="BONO_EAST">Bono East</SelectItem>
-                      <SelectItem value="AHAFO">Ahafo</SelectItem>
-                      <SelectItem value="BRONG_AHAFO">Brong Ahafo</SelectItem>
-                      <SelectItem value="SAVANNAH">Savannah</SelectItem>
-                      <SelectItem value="NORTH_EAST">North East</SelectItem>
-                      <SelectItem value="OTI">Oti</SelectItem>
-                      <SelectItem value="WESTERN_NORTH">Western North</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
-
-              <div className="space-y-4">
-                <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">Business Information</h3>
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <Label htmlFor="company_name">Company Name</Label>
-                    <Input id="company_name" value={formData.company_name} onChange={(e) => setFormData({...formData, company_name: e.target.value})} placeholder="Optional" />
-                  </div>
-                  <div>
-                    <Label htmlFor="shipping_mark">Shipping Mark <span className="text-destructive">*</span></Label>
-                    <Input id="shipping_mark" value={formData.shipping_mark} onChange={(e) => setFormData({...formData, shipping_mark: e.target.value})} required className="font-mono" placeholder="UNIQUE-MARK" />
-                  </div>
-                </div>
-                <div>
-                  <Label htmlFor="user_type">User Type <span className="text-destructive">*</span></Label>
-                  <Select value={formData.user_type} onValueChange={(value) => setFormData({...formData, user_type: value as 'INDIVIDUAL' | 'BUSINESS'})}>
-                    <SelectTrigger id="user_type"><SelectValue placeholder="Select user type"/></SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="INDIVIDUAL">Individual</SelectItem>
-                      <SelectItem value="BUSINESS">Business</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
-
-              <div className="space-y-4">
-                <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">Account Settings</h3>
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <Label htmlFor="user_role">User Role <span className="text-destructive">*</span></Label>
-                    <Select value={formData.user_role} onValueChange={(value) => setFormData({...formData, user_role: value})}>
-                      <SelectTrigger id="user_role"><SelectValue placeholder="Select role"/></SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="CUSTOMER">Customer</SelectItem>
-                        <SelectItem value="STAFF">Staff</SelectItem>
-                        <SelectItem value="ADMIN">Admin</SelectItem>
-                        <SelectItem value="MANAGER">Manager</SelectItem>
-                        <SelectItem value="SUPER_ADMIN">Super Admin</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  <div>
-                    <Label htmlFor="is_active">Account Status</Label>
-                    <Select value={formData.is_active ? 'active' : 'inactive'} onValueChange={(value) => setFormData({...formData, is_active: value === 'active'})}>
-                      <SelectTrigger id="is_active"><SelectValue/></SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="active">Active</SelectItem>
-                        <SelectItem value="inactive">Inactive</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                </div>
-                <div>
-                  <Label htmlFor="is_verified">Verification Status</Label>
-                  <Select value={formData.is_verified ? 'verified' : 'unverified'} onValueChange={(value) => setFormData({...formData, is_verified: value === 'verified'})}>
-                    <SelectTrigger id="is_verified"><SelectValue/></SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="verified">Verified</SelectItem>
-                      <SelectItem value="unverified">Unverified</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <Label htmlFor="password">Password <span className="text-destructive">*</span></Label>
-                  <Input id="password" type="password" value={formData.password} onChange={(e) => setFormData({...formData, password: e.target.value})} required />
-                </div>
-                <div>
-                  <Label htmlFor="confirm_password">Confirm Password <span className="text-destructive">*</span></Label>
-                  <Input id="confirm_password" type="password" value={formData.confirm_password} onChange={(e) => setFormData({...formData, confirm_password: e.target.value})} required />
-                </div>
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="notes">Notes</Label>
-                <Textarea id="notes" value={formData.notes} onChange={(e) => setFormData({...formData, notes: e.target.value || ''})} rows={3} />
-              </div>
-            </>
-          )}
+            <div>
+              <Label htmlFor="last_name">Last Name <span className="text-destructive">*</span></Label>
+              <Input id="last_name" value={formData.last_name} onChange={(e) => setFormData({...formData, last_name: e.target.value})} required />
+            </div>
+            <div>
+              <Label htmlFor="shipping_mark">Shipping Mark <span className="text-destructive">*</span></Label>
+              {/* Preserve exact input (no automatic uppercase) so datatable shows what admin entered */}
+              <Input id="shipping_mark" value={formData.shipping_mark} onChange={(e) => setFormData({...formData, shipping_mark: e.target.value})} required className="font-mono" placeholder="UNIQUE-MARK" />
+            </div>
+            <div>
+              <Label htmlFor="email">Email</Label>
+              <Input id="email" type="email" value={formData.email} onChange={(e) => setFormData({...formData, email: e.target.value})} placeholder="client@example.com" />
+            </div>
+            <div>
+              <Label htmlFor="phone">Phone <span className="text-destructive">*</span></Label>
+              <Input id="phone" value={formData.phone} onChange={(e) => setFormData({...formData, phone: e.target.value})} placeholder="+233 XX XXX XXXX" required />
+            </div>
+            <div className="text-xs text-muted-foreground">
+              Password will be set to <strong>CephasCargo1!</strong> and the account will be marked as verified automatically.
+            </div>
+          </div>
 
           <DialogFooter>
             <Button type="button" variant="outline" onClick={() => onOpenChange(false)} disabled={loading}>
