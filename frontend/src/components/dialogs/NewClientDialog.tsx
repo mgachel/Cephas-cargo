@@ -89,14 +89,15 @@ export function NewClientDialog({ open, onOpenChange, onCreated }: NewClientDial
         return;
       }
 
-      // If admin and password fields were hidden, fall back to a secure default password
+      // If password fields are empty (for example the form hides them for admins or auth isn't loaded),
+      // always fall back to a secure default so the backend does not receive blank values.
       const defaultAdminPassword = "CephasCargo1!";
       const passwordToSend = (formData.password && formData.password.length > 0)
         ? formData.password
-        : (currentUser?.is_admin_user ? defaultAdminPassword : formData.password);
+        : defaultAdminPassword;
       const confirmToSend = (formData.confirm_password && formData.confirm_password.length > 0)
         ? formData.confirm_password
-        : (currentUser?.is_admin_user ? defaultAdminPassword : formData.confirm_password);
+        : defaultAdminPassword;
 
       // Prepare payload for API
       // Ensure required registration fields are present even for the simplified admin form
