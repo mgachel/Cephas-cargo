@@ -58,7 +58,7 @@ class AdminUserCreateSerializer(serializers.ModelSerializer):
         model = CustomerUser
         fields = [
             'first_name', 'last_name', 'company_name', 'email', 'phone', 
-            'region', 'user_role', 'user_type', 'accessible_warehouses',
+            'region', 'shipping_mark', 'user_role', 'user_type', 'accessible_warehouses',
             'can_create_users', 'can_manage_inventory', 'can_view_analytics',
             'can_manage_admins', 'password', 'confirm_password'
         ]
@@ -89,6 +89,13 @@ class AdminUserCreateSerializer(serializers.ModelSerializer):
     
     def validate_password(self, value):
         validate_password(value)
+        return value
+
+    def validate_shipping_mark(self, value):
+        """Validate shipping mark uniqueness for creation."""
+        # Ensure shipping mark is not already taken
+        if CustomerUser.objects.filter(shipping_mark=value).exists():
+            raise serializers.ValidationError("This shipping mark is already in use.")
         return value
     
     def create(self, validated_data):
