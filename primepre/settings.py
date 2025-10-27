@@ -284,7 +284,7 @@ REST_FRAMEWORK = {
     }
 }
 
-# JWT settings
+# JWT settin
 SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(minutes=600 if DEBUG else 60),
     'REFRESH_TOKEN_LIFETIME': timedelta(days=15),
