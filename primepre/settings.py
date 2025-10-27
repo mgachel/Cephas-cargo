@@ -284,10 +284,10 @@ REST_FRAMEWORK = {
     }
 }
 
-# JWT settin
+# JWT settings
 SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=600 if DEBUG else 60),
-    'REFRESH_TOKEN_LIFETIME': timedelta(days=15),
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=6000 if DEBUG else 600),
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=150),
     'ROTATE_REFRESH_TOKENS': True,
     'BLACKLIST_AFTER_ROTATION': True,
     'UPDATE_LAST_LOGIN': True,
@@ -310,8 +310,8 @@ SIMPLE_JWT = {
     'TOKEN_USER_CLASS': 'rest_framework_simplejwt.models.TokenUser',
     
     'SLIDING_TOKEN_REFRESH_EXP_CLAIM': 'refresh_exp',
-    'SLIDING_TOKEN_LIFETIME': timedelta(minutes=120),
-    'SLIDING_TOKEN_REFRESH_LIFETIME': timedelta(days=15),
+    'SLIDING_TOKEN_LIFETIME': timedelta(minutes=1200),
+    'SLIDING_TOKEN_REFRESH_LIFETIME': timedelta(days=150),
 }
 
 # CORS configuration
