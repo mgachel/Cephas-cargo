@@ -217,8 +217,9 @@ class ApiClient {
     localStorage.removeItem("user");
     localStorage.removeItem("admin_info");
 
-    // Decide where to redirect after logout: admin login if user was admin or we're on admin host
-    let redirectTo = '/login';
+    // Decide where to redirect after logout: default to public landing page,
+    // but still send admin users to admin login when appropriate.
+    let redirectTo = '/';
     try {
       if (storedUser) {
         const parsed = JSON.parse(storedUser as string);

@@ -78,8 +78,8 @@ export default function NotFound() {
       {/* 404 Info and Logo, fade/slide in when vehicles are leaving */}
       <div className={`relative z-10 flex flex-col items-center justify-center min-h-screen px-6 pt-1 transition-all duration-700 ${showText ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8 pointer-events-none'}`}>
         <img
-          src="/primepre-logo.png"
-          alt="Prime Pre Logistics"
+          src="/CCL_LOGO_TP.png"
+          alt="Cephas Cargo and Logistics"
           className="w-48 h-auto mb-8"
         />
         <h1 className="text-8xl font-bold text-white drop-shadow-lg mb-4">404</h1>
@@ -106,7 +106,7 @@ export default function NotFound() {
         </div>
         <div className="mt-32 text-center text-white/80">
           <p className="text-sm">Need help? Contact our support team</p>
-          <p className="text-sm mt-1">support@primepre.com</p>
+          <p className="text-sm mt-1">support@cephascargo.com</p>
         </div>
       </div>
       {/* Animations CSS */}
