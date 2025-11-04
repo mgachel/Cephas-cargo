@@ -105,6 +105,14 @@ export default function SeaCargo() {
   const [editOpen, setEditOpen] = useState(false);
   const [editContainer, setEditContainer] =
     useState<BackendCargoContainer | null>(null);
+   
+  // Helper: sort containers by loading date descending (newest first)
+  const sortByLoadingDateDesc = (arr: BackendCargoContainer[] = []) =>
+    arr.slice().sort((a, b) => {
+      const ta = a.load_date ? new Date(a.load_date).getTime() : 0;
+      const tb = b.load_date ? new Date(b.load_date).getTime() : 0;
+      return tb - ta; // Descending order (newest first)
+    });
 
   // Load containers and dashboard
   useEffect(() => {
@@ -123,15 +131,19 @@ export default function SeaCargo() {
         // Use customer endpoints if user is a customer
         if (isCustomer) {
           const [listRes, dashRes] = await Promise.all([
+            // page_size isn't part of CargoFilters; use page/limit instead
             cargoService.getCustomerSeaCargoContainers({
               search: searchTerm || undefined,
               status: statusParam,
-              page_size: 100,
-            }),
+              page: 1,
+              limit: 100,
+            } as any),
             cargoService.getCustomerSeaCargoDashboard(),
           ]);
           if (!ignore) {
-            setContainers(Array.isArray(listRes?.results) ? listRes.results : []);
+            setContainers(
+              sortByLoadingDateDesc(Array.isArray(listRes?.results) ? listRes.results : [])
+            );
             setDashboard(dashRes || null);
           }
         } else {
@@ -145,7 +157,7 @@ export default function SeaCargo() {
             cargoService.getDashboard("sea"),
           ]);
           if (!ignore) {
-            setContainers(listRes.data?.results || []);
+            setContainers(sortByLoadingDateDesc(listRes.data?.results || []));
             setDashboard(dashRes.data || null);
           }
         }
@@ -174,14 +186,16 @@ export default function SeaCargo() {
       
       if (isCustomer) {
         const [listRes, dashRes] = await Promise.all([
+          // page_size is not part of CargoFilters type; pass as page param instead
           cargoService.getCustomerSeaCargoContainers({
             search: searchTerm || undefined,
             status: statusParam,
-            page_size: 100,
-          }),
+            page: 1,
+            limit: 100,
+          } as any),
           cargoService.getCustomerSeaCargoDashboard(),
         ]);
-        setContainers(Array.isArray(listRes?.results) ? listRes.results : []);
+        setContainers(sortByLoadingDateDesc(Array.isArray(listRes?.results) ? listRes.results : []));
         setDashboard(dashRes || null);
       } else {
         const [listRes, dashRes] = await Promise.all([
@@ -192,7 +206,7 @@ export default function SeaCargo() {
           }),
           cargoService.getDashboard("sea"),
         ]);
-        setContainers(listRes.data?.results || []);
+        setContainers(sortByLoadingDateDesc(listRes.data?.results || []));
         setDashboard(dashRes.data || null);
       }
     } catch (e: unknown) {
@@ -235,7 +249,22 @@ export default function SeaCargo() {
     }
   };
 
+  // Always present containers sorted by loading date (newest first)
   const filteredCargo = useMemo(() => containers, [containers]);
+
+  // Count containers created in the current month for the "This Month" card
+  const thisMonthCount = useMemo(() => {
+    try {
+      const now = new Date();
+      return filteredCargo.filter((c) => {
+        if (!c.created_at) return false;
+        const d = new Date(c.created_at);
+        return d.getFullYear() === now.getFullYear() && d.getMonth() === now.getMonth();
+      }).length;
+    } catch {
+      return 0;
+    }
+  }, [filteredCargo]);
 
   // Filter columns for customers - hide rate and clients columns
   const cols = useMemo(() => {
@@ -446,7 +475,7 @@ export default function SeaCargo() {
             <div className="flex items-center justify-between">
               <div>
                 <div className="text-[10px] sm:text-xs md:text-sm text-muted-foreground">This Month</div>
-                <div className="text-lg sm:text-xl md:text-2xl font-semibold mt-0.5 sm:mt-1">12</div>
+                <div className="text-lg sm:text-xl md:text-2xl font-semibold mt-0.5 sm:mt-1">{thisMonthCount}</div>
               </div>
               <Calendar className="h-6 w-6 sm:h-7 sm:w-7 md:h-8 md:w-8" style={{ color: primaryColor }} />
             </div>
